@@ -8,6 +8,9 @@ return {
 
       local explorer = opts.picker.sources.explorer
 
+      -- Show hidden files by default
+      explorer.hidden = true
+
       explorer.actions = explorer.actions or {}
 
       local function tmux_or_wincmd(tmux_direction, vim_direction)
