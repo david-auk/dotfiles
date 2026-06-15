@@ -1,0 +1,29 @@
+return {}
+-- return {
+--   {
+--     "hrsh7th/nvim-cmp",
+--     opts = function(_, opts)
+--       local cmp = require("cmp")
+--
+--       -- Keep existing mappings
+--       opts.mapping = vim.tbl_extend("force", opts.mapping or {}, {
+--
+--         -- Vim-style navigation through autocomplete items
+--         ["<C-j>"] = cmp.mapping.select_next_item({
+--           behavior = cmp.SelectBehavior.Select,
+--         }),
+--
+--         ["<C-k>"] = cmp.mapping.select_prev_item({
+--           behavior = cmp.SelectBehavior.Select,
+--         }),
+--
+--         -- Confirm selection
+--         ["<CR>"] = cmp.mapping.confirm({
+--           select = true,
+--         }),
+--       })
+--
+--       return opts
+--     end,
+--   },
+-- }

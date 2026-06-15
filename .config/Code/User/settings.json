@@ -1,0 +1,37 @@
+{
+    "makefile.configureOnOpen": true,
+    "containers.containerClient": "com.microsoft.visualstudio.containers.docker",
+    "files.autoSave": "afterDelay",
+    "explorer.confirmDragAndDrop": false,
+    "typescript.updateImportsOnFileMove.enabled": "always",
+    "javascript.updateImportsOnFileMove.enabled": "always",
+    "editor.formatOnSave": true,
+    "typescript.tsserver.experimental.enableProjectDiagnostics": true,
+    "react-native-tools.projectRoot": "./",
+    "react-native-tools.logLevel": "Trace",
+    "workbench.settings.showAISearchToggle": false,
+    "chat.extensionUnification.enabled": false,
+    "typescript.preferences.quoteStyle": "single",
+    "eslint.useFlatConfig": true,
+    "files.associations": {
+        "config": "gitconfig"
+    },
+    "chat.disableAIFeatures": true,
+    "terminal.integrated.allowedLinkSchemes": [
+        "file",
+        "http",
+        "https",
+        "mailto",
+        "vscode",
+        "vscode-insiders",
+        "components/Cards.tsx",
+        "app/index.tsx"
+    ],
+    "cSpell.userWords": [
+        "AUTHENTIK"
+    ],
+    "editor.codeActionsOnSave": {
+        "source.fixAll": "explicit"
+    },
+    "vim.smartRelativeLine": true
+}

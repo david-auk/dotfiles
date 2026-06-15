@@ -1,0 +1,72 @@
+first_name_only = false
+show_receipts = true
+bell = true
+colored_messages = false
+default_keybindings = true
+
+[notifications]
+enabled = true
+mute_reactions_bell = false
+show_message_chat = true
+show_message_text = true
+show_reactions = true
+
+[user]
+display_name = "David"
+
+[keybindings.anywhere]
+alt-down = "no_op"
+alt-j = "select_channel next"
+alt-k = "select_channel previous"
+alt-up = "no_op"
+ctrl-7 = "toggle_channel_modal"
+ctrl-shift-7 = "help"
+ctrl-c = "kill_whole_line"
+ctrl-d = "delete_character next"
+ctrl-j = "select_message next entry"
+ctrl-k = "select_message previous entry"
+ctrl-q = "quit"
+ctrl-y = "copy_message selected"
+down = "move_text next line"
+up = "move_text previous line"
+
+[keybindings.normal]
+alt-m = "toggle_mute_channel"
+
+[keybindings.message_selected]
+alt-e = "edit_message"
+alt-d = "delete_message"
+
+[keybindings.channel_modal]
+alt-j = "select_channel_modal next"
+alt-k = "select_channel_modal previous"
+ctrl-j = "no_op"
+ctrl-k = "no_op"
+ctrl-y = "no_op"
+ctrl-o = "no_op"
+ctrl-f = "no_op"
+ctrl-p = "toggle_channel_modal"
+esc = "toggle_channel_modal"
+
+[keybindings.help]
+j = "scroll help down entry"
+k = "scroll help up entry"
+ctrl-y = "no_op"
+ctrl-o = "no_op"
+ctrl-f = "no_op"
+ctrl-p = "no_op"
+esc = "help"
+q = "help"
+
+[keybindings.multiline]
+ctrl-j = "move_text next line"
+ctrl-k = "move_text previous line"
+alt-j = "no_op"
+alt-k = "no_op"
+ctrl-y = "no_op"
+ctrl-o = "no_op"
+ctrl-f = "no_op"
+ctrl-p = "no_op"
+ctrl-a = "beginning_of_line"
+ctrl-e = "end_of_line"
+esc = "toggle_multiline"
