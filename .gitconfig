@@ -1,0 +1,7 @@
+[include]
+  path = ~/.gitconfig.local
+
+[push]
+    autoSetupRemote = true
+[alias]
+	ca = commit -am
