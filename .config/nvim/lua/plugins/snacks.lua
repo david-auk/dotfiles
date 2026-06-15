@@ -10,6 +10,7 @@ return {
 
       -- Show hidden files by default
       explorer.hidden = true
+      explorer.ignored = true
 
       explorer.actions = explorer.actions or {}
 
