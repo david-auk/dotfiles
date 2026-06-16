@@ -1,5 +1,9 @@
 #!/usr/bin/env zsh
 
+export PATH="/System/Volumes/Data/Users/david/Library/Python/3.9/bin/:/usr/local/sbin:$PATH"
+
+# Add the path for UV
+export PATH="/Users/david/.local/bin:$PATH"
 if [[ -f "/opt/homebrew/bin/brew" ]]; then
   # If you're using macOS, you'll want this enabled
   eval "$(/opt/homebrew/bin/brew shellenv)"
@@ -76,12 +80,48 @@ alias ls="ls -G"
 alias ll="ls -al"
 alias vim='nvim'
 alias tk='tmux kill-session -a'
+alias zad='ls -d */ | xargs -I {} zoxide add {}'
 
 # Shell integrations
 eval "$(fzf --zsh)"
 eval "$(zoxide init --cmd cd zsh)"
 
-# Start Tmux on shell Start
-if [[ -o interactive && -z "$TMUX" ]]; then
-  exec tmux
-fi
+sesh_picker() {
+  local selected
+
+  if [[ -n "$TMUX" ]]; then
+    selected=$(
+      sesh list --icons | fzf-tmux -p '80%,70%' \
+        --no-sort --ansi --border-label ' sesh ' --prompt '⚡  ' \
+        --header '  ^a all ^t tmux ^g configs ^x zoxide ^d tmux kill ^f find' \
+        --bind 'tab:down,btab:up' \
+        --bind 'ctrl-a:change-prompt(⚡  )+reload(sesh list --icons)' \
+        --bind 'ctrl-t:change-prompt(🪟  )+reload(sesh list -t --icons)' \
+        --bind 'ctrl-g:change-prompt(⚙️  )+reload(sesh list -c --icons)' \
+        --bind 'ctrl-x:change-prompt(📁  )+reload(sesh list -z --icons)' \
+        --bind 'ctrl-f:change-prompt(🔎  )+reload(fd -H -d 2 -t d -E .Trash . ~)' \
+        --bind 'ctrl-d:execute(tmux kill-session -t {2..})+change-prompt(⚡  )+reload(sesh list --icons)' \
+        --preview-window 'right:55%' \
+        --preview 'sesh preview {}'
+    ) || return 0
+  else
+    selected=$(
+      sesh list --icons | fzf \
+        --height '70%' --layout reverse --border \
+        --no-sort --ansi --border-label ' sesh ' --prompt '⚡  ' \
+        --header '  ^a all ^t tmux ^g configs ^x zoxide ^f find' \
+        --bind 'tab:down,btab:up' \
+        --bind 'ctrl-a:change-prompt(⚡  )+reload(sesh list --icons)' \
+        --bind 'ctrl-t:change-prompt(🪟  )+reload(sesh list -t --icons)' \
+        --bind 'ctrl-g:change-prompt(⚙️  )+reload(sesh list -c --icons)' \
+        --bind 'ctrl-x:change-prompt(📁  )+reload(sesh list -z --icons)' \
+        --bind 'ctrl-f:change-prompt(🔎  )+reload(fd -H -d 2 -t d -E .Trash . ~)' \
+        --preview-window 'right:55%' \
+        --preview 'sesh preview {}'
+    ) || return 0
+  fi
+
+  [[ -n "$selected" ]] && sesh connect "$selected"
+}
+
+alias s=sesh_picker

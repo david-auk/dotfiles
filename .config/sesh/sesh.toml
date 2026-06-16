@@ -1,0 +1,36 @@
+# open the file manager
+[[session]]
+name = "Downloads 📥"
+path = "~/Downloads"
+startup_command = "yazi"
+
+# open a file
+[[session]]
+name = "tmuxconfig"
+path = "~/.config/tmux"
+startup_command = "nvim tmux.conf"
+preview_command = "bat --color=always ~/.config/tmux/tmux.conf"
+
+[[session]]
+name = "zshconfig"
+path = "~/dotfiles"
+startup_command = "nvim .zshrc"
+preview_command = "bat --color=always ~/.zshrc"
+
+[[session]]
+name = "seshconfig"
+path = "~/dotfiles/.config/sesh"
+startup_command = "nvim sesh.toml"
+preview_command = "bat --color=always ~/dotfiles/.config/sesh/sesh.toml"
+
+# [[window]]
+# name = "git"
+# startup_script = "lazygit"
+
+# run a script to startup a node project
+# [[session]]
+# path = "~/c/joshmedeski.com"
+# startup_script = "~/.config/sesh/scripts/node_dev"
+
+[default_session]
+startup_command = "nvim -c ':Telescope find_files'"
