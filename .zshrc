@@ -63,7 +63,9 @@ setopt hist_find_no_dups
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
 [[ -n "$LS_COLORS" ]] && zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 zstyle ':completion:*' menu no
-zstyle ':fzf-tab:complete:cd:*' fzf-preview 'ls -G "$realpath"'
+zstyle ':fzf-tab:*' fzf-flags --ansi
+zstyle ':fzf-tab:complete:cd:*' fzf-preview 'CLICOLOR_FORCE=1 ls -G "$realpath"'
+zstyle ':fzf-tab:complete:__zoxide_z:*' fzf-preview 'CLICOLOR_FORCE=1 ls -G "$realpath"'
 
 # Aliases
 alias ls="ls -G"
@@ -72,4 +74,4 @@ alias c='clear'
 
 # Shell integrations
 eval "$(fzf --zsh)"
-# eval "$(zoxide init --cmd cd zsh)"
+eval "$(zoxide init --cmd cd zsh)"
