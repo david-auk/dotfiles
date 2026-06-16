@@ -10,6 +10,11 @@ alignment = 'left'
 newline = true
 
 [[blocks.segments]]
+type = "python"
+style = "plain"
+template = '{{ if .Error }}{{ .Error }}{{ else }}({{ if .Venv }}{{ .Venv }}{{ else }}{{ .Full }}{{ end }}) {{ end }}'
+
+[[blocks.segments]]
 type = 'path'
 style = 'plain'
 background = 'transparent'
@@ -72,3 +77,6 @@ template = '❯ '
 foreground = 'magenta'
 background = 'transparent'
 template = '❯❯ '
+
+[palette]
+grey = '#6c6c6c'

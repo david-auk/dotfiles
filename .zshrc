@@ -48,7 +48,7 @@ bindkey '^n' history-search-forward
 bindkey '^[w' kill-region
 
 # Treat `/` as a word boundary so Esc/Alt+Backspace removes one path segment
-WORDCHARS=${WORDCHARS//\/}
+WORDCHARS=${WORDCHARS//\//}
 
 # History
 HISTSIZE=5000
@@ -75,7 +75,7 @@ zstyle ':fzf-tab:complete:__zoxide_z:*' fzf-preview 'CLICOLOR_FORCE=1 ls -G "$re
 alias ls="ls -G"
 alias ll="ls -al"
 alias vim='nvim'
-alias c='clear'
+alias tk='tmux kill-session -a'
 
 # Shell integrations
 eval "$(fzf --zsh)"
