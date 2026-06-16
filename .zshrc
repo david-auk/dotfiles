@@ -47,6 +47,9 @@ bindkey '^p' history-search-backward
 bindkey '^n' history-search-forward
 bindkey '^[w' kill-region
 
+# Treat `/` as a word boundary so Esc/Alt+Backspace removes one path segment
+WORDCHARS=${WORDCHARS//\/}
+
 # History
 HISTSIZE=5000
 HISTFILE=~/.zsh_history
@@ -70,9 +73,15 @@ zstyle ':fzf-tab:complete:__zoxide_z:*' fzf-preview 'CLICOLOR_FORCE=1 ls -G "$re
 
 # Aliases
 alias ls="ls -G"
+alias ll="ls -al"
 alias vim='nvim'
 alias c='clear'
 
 # Shell integrations
 eval "$(fzf --zsh)"
 eval "$(zoxide init --cmd cd zsh)"
+
+# Start Tmux on shell Start
+if [[ -o interactive && -z "$TMUX" ]]; then
+  exec tmux
+fi
