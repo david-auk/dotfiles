@@ -4,15 +4,10 @@
 
 
 if true then return {
-  { "ellisonleao/gruvbox.nvim" },
-
   { "ThePrimeagen/vim-be-good" },
 
   {
     "LazyVim/LazyVim",
-    opts = {
-      colorscheme = "gruvbox",
-    },
   },
 } end
 
@@ -23,15 +18,9 @@ if true then return {
 -- * disable/enabled LazyVim plugins
 -- * override the configuration of LazyVim plugins
 return {
-  -- add gruvbox
-  { "ellisonleao/gruvbox.nvim" },
-
-  -- Configure LazyVim to load gruvbox
+  -- Configure LazyVim
   {
     "LazyVim/LazyVim",
-    opts = {
-      colorscheme = "gruvbox",
-    },
   },
 
   -- change trouble config

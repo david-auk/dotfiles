@@ -4,7 +4,7 @@ name = "Downloads 📥"
 path = "~/Downloads"
 startup_command = "yazi"
 
-# open a file
+# Configs
 [[session]]
 name = "tmuxconfig"
 path = "~/.config/tmux"
@@ -23,14 +23,20 @@ path = "~/dotfiles/.config/sesh"
 startup_command = "nvim sesh.toml"
 preview_command = "bat --color=always ~/dotfiles/.config/sesh/sesh.toml"
 
-# [[window]]
-# name = "git"
-# startup_script = "lazygit"
+[[session]]
+name = "nvimconfig"
+path = "~/dotfiles/.config/nvim/lua"
+startup_command = "nvim ."
+
+[[session]]
+name = "homebrowse"
+path = "~/"
+startup_command = "yazi"
 
 # run a script to startup a node project
-# [[session]]
-# path = "~/c/joshmedeski.com"
-# startup_script = "~/.config/sesh/scripts/node_dev"
+[[session]]
+path = "~/Documents/git/lab/naturalis/bii/tol/docker-compose-tol"
+startup_script = "~/.config/sesh/scripts/make_dev"
 
 [default_session]
 startup_command = "nvim -c ':Telescope find_files'"
