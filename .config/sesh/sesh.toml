@@ -1,3 +1,5 @@
+#:schema https://github.com/joshmedeski/sesh/raw/main/sesh.schema.json
+
 # open the file manager
 [[session]]
 name = "Downloads 📥"
@@ -36,7 +38,15 @@ startup_command = "yazi"
 # run a script to startup a node project
 [[session]]
 path = "~/Documents/git/lab/naturalis/bii/tol/docker-compose-tol"
-startup_script = "~/.config/sesh/scripts/make_dev"
+startup_command = "~/.config/sesh/scripts/make_dev"
+
+[[session]]
+name = "gurk"
+startup_command = "gurk"
+
+[[session]]
+name = "update brew"
+startup_command = "brew update && brew upgrade -y && exit 0"
 
 [default_session]
 startup_command = "nvim -c ':Telescope find_files'"

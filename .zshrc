@@ -25,12 +25,12 @@ source "${ZINIT_HOME}/zinit.zsh"
 zinit light zsh-users/zsh-completions
 
 # Add in snippets
-zinit snippet OMZL::git.zsh
-zinit snippet OMZP::git
-zinit snippet OMZP::sudo
-zinit snippet OMZP::aws
-zinit snippet OMZP::kubectl
-zinit snippet OMZP::kubectx
+# zinit snippet OMZL::git.zsh
+# zinit snippet OMZP::git
+# # zinit snippet OMZP::sudo
+# zinit snippet OMZP::aws
+# zinit snippet OMZP::kubectl
+# zinit snippet OMZP::kubectx
 
 # Load completions
 autoload -Uz compinit
@@ -46,10 +46,43 @@ zinit cdreplay -q
 eval "$(oh-my-posh init zsh --config $HOME/.config/ohmyposh/zen.toml)"
 
 # Keybindings
-bindkey -e
-bindkey '^p' history-search-backward
-bindkey '^n' history-search-forward
-bindkey '^[w' kill-region
+bindkey -v
+
+KEYTIMEOUT=1
+
+autoload -Uz add-zle-hook-widget
+
+function cursor-shape-update() {
+  if [[ $KEYMAP == vicmd ]]; then
+    printf '\e[2 q' # block
+  else
+    printf '\e[6 q' # beam
+  fi
+}
+
+function cursor-shape-init() {
+  printf '\e[6 q'
+}
+
+function cursor-shape-precmd() {
+  printf '\e[6 q'
+}
+
+add-zle-hook-widget keymap-select cursor-shape-update
+add-zle-hook-widget line-init cursor-shape-init
+
+autoload -Uz add-zsh-hook
+add-zsh-hook precmd cursor-shape-precmd
+
+# Vi insert mode bindings
+bindkey -M viins '^p' history-search-backward
+bindkey -M viins '^n' history-search-forward
+bindkey -M viins '^f' autosuggest-accept
+bindkey -M viins '^a' beginning-of-line
+bindkey -M viins '^e' end-of-line
+
+# Remove unwanted Alt/Esc+h man-page binding if it exists
+bindkey -r '^[h' 2>/dev/null
 
 # Treat `/` as a word boundary so Esc/Alt+Backspace removes one path segment
 WORDCHARS=${WORDCHARS//\//}
@@ -67,6 +100,9 @@ setopt hist_save_no_dups
 setopt hist_ignore_dups
 setopt hist_find_no_dups
 
+# Defaults
+EDITOR='nvim'
+
 # Completion styling
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
 [[ -n "$LS_COLORS" ]] && zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
@@ -79,11 +115,17 @@ zstyle ':fzf-tab:complete:__zoxide_z:*' fzf-preview 'CLICOLOR_FORCE=1 ls -G "$re
 alias ls="ls -G"
 alias ll="ls -al"
 alias vim='nvim'
+alias vi='nvim'
+alias v='nvim'
 alias tk='tmux kill-session -a'
 alias zad='ls -d */ | xargs -I {} zoxide add {}'
 
 # Shell integrations
 eval "$(fzf --zsh)"
 eval "$(zoxide init --cmd cd zsh)"
+
+# Final Ctrl-r behavior (after shell integrations)
+bindkey -M viins '^r' fzf-history-widget
+bindkey -M vicmd '^r' redo
 
 alias s='~/.config/sesh/scripts/sesh_picker'

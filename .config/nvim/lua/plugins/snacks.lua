@@ -12,6 +12,17 @@ return {
       explorer.hidden = true
       explorer.ignored = true
 
+      explorer.exclude = {
+        "node_modules",
+        ".git",
+        "__pycache__",
+        "dist",
+        "build",
+        "target",
+        ".next",
+        "coverage",
+      }
+
       explorer.actions = explorer.actions or {}
 
       local function tmux_or_wincmd(tmux_direction, vim_direction)
