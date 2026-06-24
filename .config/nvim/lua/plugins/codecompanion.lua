@@ -6,28 +6,41 @@ return {
       "nvim-treesitter/nvim-treesitter",
     },
     opts = {
-      strategies = {
-        chat = {
-          adapter = "openai",
-        },
-        inline = {
-          adapter = "openai",
+      adapters = {
+        acp = {
+          codex = function()
+            return require("codecompanion.adapters").extend("codex", {
+              defaults = {
+                auth_method = "chatgpt",
+              },
+            })
+          end,
         },
       },
-      adapters = {
-        openai = function()
-          return require("codecompanion.adapters").extend("openai", {
-            env = {
-              api_key = "OPENAI_API_KEY",
-            },
-          })
-        end,
+      interactions = {
+        chat = {
+          adapter = "codex",
+        },
       },
     },
     keys = {
-      { "<leader>ac", "<cmd>CodeCompanionChat Toggle<cr>", desc = "CodeCompanion Chat" },
-      { "<leader>aa", "<cmd>CodeCompanionActions<cr>", desc = "CodeCompanion Actions" },
-      { "<leader>ai", "<cmd>CodeCompanion<cr>", desc = "CodeCompanion Inline" },
+      {
+        "<leader>aa",
+        "<cmd>CodeCompanionActions<cr>",
+        mode = { "n", "v" },
+        desc = "AI actions",
+      },
+      {
+        "<leader>ac",
+        "<cmd>CodeCompanionChat Toggle<cr>",
+        mode = { "n", "v" },
+        desc = "AI chat",
+      },
+      {
+        "<leader>ai",
+        "<cmd>CodeCompanion<cr>",
+        desc = "CodeCompanion Inline",
+      },
     },
   },
 }

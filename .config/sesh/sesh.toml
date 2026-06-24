@@ -27,7 +27,7 @@ preview_command = "bat --color=always ~/dotfiles/.config/sesh/sesh.toml"
 
 [[session]]
 name = "nvimconfig"
-path = "~/dotfiles/.config/nvim/lua"
+path = "~/dotfiles/.config/nvim"
 startup_command = "nvim ."
 
 [[session]]

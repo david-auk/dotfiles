@@ -15,12 +15,14 @@ return {
       explorer.exclude = {
         "node_modules",
         ".git",
+        ".DS_Store",
         "__pycache__",
         "dist",
         "build",
         "target",
         ".next",
         "coverage",
+        "bin",
       }
 
       explorer.actions = explorer.actions or {}

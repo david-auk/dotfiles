@@ -10,6 +10,21 @@ vim.keymap.set("n", "<leader>dd", function()
   Snacks.dashboard.open()
 end, { desc = "Open dashboard from home directory" })
 
+-- E = jump to last non-blank character of current line
+vim.keymap.set({ "n", "x", "o" }, "E", "g_", {
+  desc = "Go to last non-blank character of line",
+})
+
+-- B = jump to first non-blank character of current line
+vim.keymap.set({ "n", "x", "o" }, "B", "^", {
+  desc = "Go to first non-blank character of line",
+})
+
+-- Load custom namecase selector
+require("namecase").setup({
+  keymap = "<leader>rN",
+})
+
 -- Tmux navigation
 vim.keymap.set("n", "<C-h>", "<cmd>TmuxNavigateLeft<cr>", { desc = "Tmux Navigate Left", remap = false, silent = true })
 vim.keymap.set("n", "<C-j>", "<cmd>TmuxNavigateDown<cr>", { desc = "Tmux Navigate Down", remap = false, silent = true })
