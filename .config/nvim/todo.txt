@@ -1,0 +1,2 @@
+(C) LTeX fix quickactions add to dictionary
+(B) Fix yaml custom scheme def like yaml-language-server: for authentiks language

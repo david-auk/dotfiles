@@ -1,3 +1,5 @@
+local excludes = require("config.excludes")
+
 local function find_files_newest_first()
   local is_mac = vim.fn.has("macunix") == 1
 
@@ -8,25 +10,27 @@ local function find_files_newest_first()
     stat_command = "stat -c '%Y %n'"
   end
 
+  local command = {
+    "fd",
+    "--type",
+    "f",
+    "--hidden",
+  }
+
+  vim.list_extend(command, excludes.for_fd_exclude_args())
+
+  vim.list_extend(command, {
+    "--exec",
+    stat_command,
+    "{}",
+    "| sort -rn",
+    "| sed 's/^[0-9]* //'",
+  })
+
   return {
     "bash",
     "-lc",
-    table.concat({
-      "fd",
-      "--type f",
-      "--hidden",
-      "--exclude .git",
-      "--exclude node_modules",
-      "--exclude __pycache__",
-      "--exclude dist",
-      "--exclude build",
-      "--exclude target",
-      "--exclude .next",
-      "--exclude coverage",
-      "--exec " .. stat_command .. " {}",
-      "| sort -rn",
-      "| sed 's/^[0-9]* //'",
-    }, " "),
+    table.concat(command, " "),
   }
 end
 
@@ -40,17 +44,7 @@ return {
 
   opts = {
     defaults = {
-      file_ignore_patterns = {
-        "^.git/",
-        "^node_modules/",
-        "__pycache__/",
-        "%.pyc",
-        "^dist/",
-        "^build/",
-        "^target/",
-        "^.next/",
-        "^coverage/",
-      },
+      file_ignore_patterns = excludes.for_telescope_file_ignore_patterns(),
       path_display = { "smart" },
     },
 

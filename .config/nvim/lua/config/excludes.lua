@@ -1,10 +1,10 @@
--- ~/.config/nvim/lua/config/excludes.lua
-
 local M = {}
 
 M.directories = {
   "node_modules",
   ".git",
+  ".venv",
+  "venv",
   "__pycache__",
   "dist",
   "build",
@@ -29,8 +29,14 @@ end
 function M.for_snacks_explorer()
   local result = {}
 
-  vim.list_extend(result, M.directories)
-  vim.list_extend(result, M.files)
+  for _, directory in ipairs(M.directories) do
+    table.insert(result, "**/" .. directory)
+    table.insert(result, "**/" .. directory .. "/**")
+  end
+
+  for _, file in ipairs(M.files) do
+    table.insert(result, "**/" .. file)
+  end
 
   return result
 end

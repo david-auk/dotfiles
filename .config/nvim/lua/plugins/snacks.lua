@@ -2,28 +2,19 @@ return {
   {
     "folke/snacks.nvim",
     opts = function(_, opts)
+      local excludes = require("config.excludes")
+
       opts.picker = opts.picker or {}
       opts.picker.sources = opts.picker.sources or {}
       opts.picker.sources.explorer = opts.picker.sources.explorer or {}
 
       local explorer = opts.picker.sources.explorer
 
-      -- Show hidden files by default
+      -- Show hidden and ignored files by default
       explorer.hidden = true
       explorer.ignored = true
 
-      explorer.exclude = {
-        "node_modules",
-        ".git",
-        ".DS_Store",
-        "__pycache__",
-        "dist",
-        "build",
-        "target",
-        ".next",
-        "coverage",
-        "bin",
-      }
+      explorer.exclude = excludes.for_snacks_explorer()
 
       explorer.actions = explorer.actions or {}
 

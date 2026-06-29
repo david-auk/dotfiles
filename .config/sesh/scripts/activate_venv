@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+for venvOption in "venv" ".venv"; do
+  activatePath="./$venvOption/bin/activate"
+  if [[ -e "$activatePath" ]]; then
+    source "$activatePath"
+    break
+  fi
+done
