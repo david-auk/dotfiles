@@ -143,3 +143,12 @@ vim.keymap.set("n", "<leader>jT", function()
 
   require("jdtls").test_class()
 end, { desc = "Run Java test class" })
+
+-- Git custom bindings
+
+vim.keymap.set("n", "<leader>ga", function()
+  vim.cmd("silent !git add " .. vim.fn.shellescape(vim.fn.expand("%:p")))
+  vim.notify("Staged current file")
+end, {
+  desc = "Git add current buffer",
+})

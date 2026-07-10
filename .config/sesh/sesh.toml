@@ -30,7 +30,7 @@ startup_command = "nvim sesh.toml"
 preview_command = "bat --color=always ~/dotfiles/.config/sesh/sesh.toml"
 
 [[session]]
-name = "nvimconfig"
+name = "neovim config"
 path = "~/dotfiles/.config/nvim"
 startup_command = "nvim ."
 windows = ["tuxedo"]

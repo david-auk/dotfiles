@@ -1,6 +1,12 @@
 return {
-  "iamkarasik/sonarqube.nvim",
-  config = function()
-    require("sonarqube").setup({})
-  end,
+  {
+    "iamkarasik/sonarqube.nvim",
+    opts = {
+      lsp = {
+        settings = {
+          ["sonarlint.disableTelemetry"] = true,
+        },
+      },
+    },
+  },
 }

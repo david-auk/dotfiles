@@ -1,6 +1,7 @@
 #!/usr/bin/env zsh
 
 export PATH="/System/Volumes/Data/Users/david/Library/Python/3.9/bin/:/usr/local/sbin:$PATH"
+export PATH="$PATH:$(go env GOPATH)/bin"
 
 # Add the path for UV
 export PATH="/Users/david/.local/bin:$PATH"
