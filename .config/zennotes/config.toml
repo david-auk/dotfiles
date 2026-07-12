@@ -183,6 +183,8 @@ kanban_statuses = []  # custom-status Kanban columns, in order — e.g. ["backlo
 [kanban_column_titles]
 "status:upcoming" = "TODO"
 "status:waiting" = "Doing"
+"folder:quick" = "TODO"
+"folder:archive" = "Doing"
 
 # Enabled CSS overrides — list the filenames you want active.
 # Example: "focus.css" = "on"
