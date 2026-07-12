@@ -20,6 +20,11 @@ vim.keymap.set({ "n", "x", "o" }, "B", "^", {
   desc = "Go to first non-blank character of line",
 })
 
+-- Enable option backspace deleting entire word
+vim.keymap.set({ "i", "c", "t" }, "<M-BS>", "<C-w>", {
+  desc = "Delete previous word",
+})
+
 -- Load custom namecase selector
 require("namecase").setup({
   keymap = "<leader>rN",
