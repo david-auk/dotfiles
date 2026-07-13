@@ -1,0 +1,74 @@
+#!/usr/bin/env bash
+
+set -u
+
+find_binary() {
+  command -v "$1" 2>/dev/null ||
+    {
+      [ -x "/opt/homebrew/bin/$1" ] &&
+        printf '/opt/homebrew/bin/%s\n' "$1"
+    } ||
+    {
+      [ -x "/usr/local/bin/$1" ] &&
+        printf '/usr/local/bin/%s\n' "$1"
+    }
+}
+
+ICAL_GUY=$(find_binary ical-guy) || exit 0
+JQ=$(find_binary jq) || exit 0
+
+meetings=$(
+  "$ICAL_GUY" meeting list \
+    --format json \
+    --no-color \
+    2>/dev/null
+) || exit 0
+
+state=$(
+  printf '%s\n' "$meetings" |
+    "$JQ" -r '
+            now as $now
+            |
+            [
+                .[]
+                | {
+                    start: (.startDate | fromdateiso8601),
+                    end: (.endDate | fromdateiso8601)
+                }
+                | select(.end > $now)
+            ]
+            | sort_by(.start)
+            | first
+            |
+            if . == null then
+                empty
+            elif .start <= $now then
+                "urgent"
+            else
+                ((.start - $now) / 60) as $minutes
+                |
+                if $minutes <= 10 then
+                    "urgent"
+                elif $minutes <= 30 then
+                    "warning"
+                else
+                    "info"
+                end
+            end
+        ' 2>/dev/null
+)
+
+case "$state" in
+info)
+  # Meeting later today: blue
+  printf '#[fg=#89b4fa]󰃰#[default]'
+  ;;
+warning)
+  # Meeting in 10–30 minutes: yellow
+  printf '#[fg=#f9e2af]󰃰#[default]'
+  ;;
+urgent)
+  # Meeting in 0–10 minutes or currently active: red
+  printf '#[fg=#f38ba8,bold]󰃰#[default]'
+  ;;
+esac

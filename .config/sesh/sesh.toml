@@ -4,12 +4,6 @@
 name = "tuxedo"
 startup_script = "tuxedo todo.txt"
 
-# open the file manager
-[[session]]
-name = "Downloads 📥"
-path = "~/Downloads"
-startup_command = "yazi"
-
 # Configs
 [[session]]
 name = "tmuxconfig"
@@ -35,11 +29,7 @@ path = "~/dotfiles/.config/nvim"
 startup_command = "nvim ."
 windows = ["tuxedo"]
 
-[[session]]
-name = "homebrowse"
-path = "~/"
-startup_command = "yazi"
-
+# TODO: Fix
 # run a script to startup a node project
 [[session]]
 path = "~/Documents/git/lab/naturalis/bii/tol/docker-compose-tol"
@@ -51,11 +41,8 @@ path = "~/Documents/git/lab/naturalis/s3-devkit/"
 startup_command = "source ~/.config/sesh/scripts/activate_venv && nvim -c ':Telescope find_files'"
 
 [[session]]
-name = "gurk"
-startup_command = "gurk"
-
-[[session]]
 name = "update brew"
+preview_command = ""
 startup_command = "brew update && brew upgrade -y && exit 0"
 
 [default_session]
