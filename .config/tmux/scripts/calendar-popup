@@ -2,185 +2,86 @@
 
 set -uo pipefail
 
-find_binary() {
-  local name=$1
+SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+LIB_DIR="$SCRIPT_DIR/calendar"
 
-  command -v "$name" 2>/dev/null ||
-    {
-      [ -x "/opt/homebrew/bin/$name" ] &&
-        printf '/opt/homebrew/bin/%s\n' "$name"
-    } ||
-    {
-      [ -x "/usr/local/bin/$name" ] &&
-        printf '/usr/local/bin/%s\n' "$name"
-    }
-}
-
-colorize_calendar() {
-  local text=$1
-  local hex=${2#\#}
-
-  # EventKit usually returns RRGGBB or RRGGBBAA.
-  if [[ "$hex" =~ ^[0-9A-Fa-f]{6}([0-9A-Fa-f]{2})?$ ]]; then
-    hex=${hex:0:6}
-
-    local red=$((16#${hex:0:2}))
-    local green=$((16#${hex:2:2}))
-    local blue=$((16#${hex:4:2}))
-
-    printf '\033[38;2;%d;%d;%dm%s\033[0m' \
-      "$red" \
-      "$green" \
-      "$blue" \
-      "$text"
-  else
-    printf '%s' "$text"
-  fi
-}
+source "$LIB_DIR/common.sh"
+source "$LIB_DIR/events.sh"
+source "$LIB_DIR/render.sh"
+source "$LIB_DIR/details.sh"
+source "$LIB_DIR/ui.sh"
+source "$LIB_DIR/actions.sh"
 
 ICAL_GUY=$(find_binary ical-guy) || {
-  tmux display-message "ical-guy was not found"
+  tmux_message "ical-guy was not found"
   exit 0
 }
 
 JQ=$(find_binary jq) || {
-  tmux display-message "jq was not found"
+  tmux_message "jq was not found"
   exit 0
 }
 
 FZF=$(find_binary fzf) || {
-  tmux display-message "fzf was not found"
+  tmux_message "fzf was not found"
   exit 0
 }
 
-events=$(
-  "$ICAL_GUY" events \
-    --from today \
-    --group-by none \
-    --format json \
-    --no-color \
-    2>/dev/null
-) || {
-  tmux display-message "Could not read calendar events"
-  exit 0
+events_file=$(mktemp)
+event_rows_file=$(mktemp)
+
+cleanup() {
+  rm -f "$events_file" "$event_rows_file"
 }
 
-event_count=$(
-  printf '%s' "$events" |
-    "$JQ" '
-      [
-        .[]
-        | select((.status // "") != "canceled")
-      ]
-      | length
-    '
-)
+trap cleanup EXIT INT TERM
+
+if ! fetch_today_events >"$events_file"; then
+  tmux_message "Could not read calendar events"
+  exit 0
+fi
+
+event_count=$(count_visible_events "$events_file")
 
 if [ "$event_count" -eq 0 ]; then
-  tmux display-message "No calendar events today"
+  tmux_message "No calendar events today"
   exit 0
 fi
 
-event_list=$(mktemp)
-trap 'rm -f "$event_list"' EXIT INT TERM
+build_event_rows "$events_file" >"$event_rows_file"
 
-printf '%s' "$events" |
-  "$JQ" -r '
-    [
-      .[]
-      | select((.status // "") != "canceled")
-    ]
-    | sort_by(.startDate)
-    | .[]
-    | [
-        (
-          .startDate
-          | sub("\\.[0-9]+Z$"; "Z")
-          | fromdateiso8601
-          | tostring
-        ),
-        (
-          .endDate
-          | sub("\\.[0-9]+Z$"; "Z")
-          | fromdateiso8601
-          | tostring
-        ),
-        (.isAllDay | tostring),
-        (
-          .title // "(untitled)"
-          | gsub("[\t\r\n]"; " ")
-        ),
-        (
-          .calendar.title // ""
-          | gsub("[\t\r\n]"; " ")
-        ),
-        (.calendar.color // ""),
-        (.meetingUrl // "")
-      ]
-      | @tsv
-  ' |
-  while IFS=$'\t' read -r \
-    start_epoch \
-    end_epoch \
-    is_all_day \
-    title \
-    calendar \
-    calendar_color \
-    meeting_url; do
+default_position=$(find_default_event_position "$events_file")
 
-    if [ "$is_all_day" = "true" ]; then
-      time_label="All day"
-    else
-      start_time=$(date -r "$start_epoch" '+%H:%M')
-      end_time=$(date -r "$end_epoch" '+%H:%M')
-      time_label="${start_time}–${end_time}"
+while true; do
+  selection=$(select_event "$event_rows_file" "$default_position") || exit 0
+
+  action=${selection%%$'\t'*}
+  event_id=${selection#*$'\t'}
+
+  [ -n "$event_id" ] || continue
+
+  # Keep this event selected when returning from the detail screen.
+  default_position=$(
+    find_event_row_position "$event_rows_file" "$event_id"
+  )
+
+  case "$action" in
+  ctrl-o)
+    if open_event_meeting "$events_file" "$event_id"; then
+      exit 0
     fi
+    ;;
 
-    if [ -n "$meeting_url" ]; then
-      meeting_indicator="󰍉"
-    else
-      meeting_indicator=" "
+  enter | "")
+    detail_action=$(
+      show_event_details "$events_file" "$event_id"
+    ) || continue
+
+    if [ "$detail_action" = "ctrl-o" ]; then
+      if open_event_meeting "$events_file" "$event_id"; then
+        exit 0
+      fi
     fi
-
-    calendar_label=$(
-      colorize_calendar "[$calendar]" "$calendar_color"
-    )
-
-    display=$(
-      printf '%-13s %s %s - %s' \
-        "$time_label" \
-        "$meeting_indicator" \
-        "$title" \
-        "$calendar_label"
-    )
-
-    printf '%s\t%s\t%s\n' \
-      "$display" \
-      "$meeting_url" \
-      "$title"
-  done >"$event_list"
-
-selection=$(
-  "$FZF" \
-    --ansi \
-    --delimiter=$'\t' \
-    --with-nth=1 \
-    --layout=reverse \
-    --border=rounded \
-    --info=inline-right \
-    --prompt='Calendar › ' \
-    --pointer='›' \
-    --no-multi \
-    --header='Enter: open meeting  •  󰍉 has meeting link  •  Esc: close' \
-    --header-first \
-    <"$event_list"
-) || exit 0
-
-IFS=$'\t' read -r _ meeting_url title <<<"$selection"
-
-if [ -z "$meeting_url" ]; then
-  tmux display-message "No meeting link for: $title"
-  exit 0
-fi
-
-/usr/bin/open "$meeting_url"
+    ;;
+  esac
+done
