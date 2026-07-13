@@ -16,73 +16,26 @@ find_binary() {
     }
 }
 
-unicode_length() {
-  printf '%s' "$1" |
-    "$JQ" -Rr '
-      def is_zero_width($cp):
-        ($cp >= 768 and $cp <= 879) or
-        ($cp >= 6832 and $cp <= 6911) or
-        ($cp >= 7616 and $cp <= 7679) or
-        ($cp >= 8400 and $cp <= 8447) or
-        ($cp >= 65024 and $cp <= 65039) or
-        ($cp >= 65056 and $cp <= 65071) or
-        ($cp >= 917760 and $cp <= 917999) or
-        ($cp >= 127995 and $cp <= 127999);
+colorize_calendar() {
+  local text=$1
+  local hex=${2#\#}
 
-      def is_wide($cp):
-        ($cp >= 4352 and $cp <= 4447) or
-        ($cp == 9001 or $cp == 9002) or
-        ($cp >= 11904 and $cp <= 42191 and $cp != 12351) or
-        ($cp >= 44032 and $cp <= 55203) or
-        ($cp >= 63744 and $cp <= 64255) or
-        ($cp >= 65040 and $cp <= 65049) or
-        ($cp >= 65072 and $cp <= 65135) or
-        ($cp >= 65280 and $cp <= 65376) or
-        ($cp >= 65504 and $cp <= 65510) or
-        ($cp >= 126976 and $cp <= 129791) or
-        ($cp >= 131072 and $cp <= 262141);
+  # EventKit usually returns RRGGBB or RRGGBBAA.
+  if [[ "$hex" =~ ^[0-9A-Fa-f]{6}([0-9A-Fa-f]{2})?$ ]]; then
+    hex=${hex:0:6}
 
-      reduce (explode[]) as $cp (
-        {
-          width: 0,
-          join_next: false,
-          regional_indicator: false
-        };
+    local red=$((16#${hex:0:2}))
+    local green=$((16#${hex:2:2}))
+    local blue=$((16#${hex:4:2}))
 
-        if $cp == 8205 then
-          # Zero-width joiner: the following emoji remains part of
-          # the current visible grapheme.
-          .join_next = true
-
-        elif is_zero_width($cp) then
-          .
-
-        elif $cp >= 127462 and $cp <= 127487 then
-          # Two regional indicators form one flag occupying two cells.
-          if .regional_indicator then
-            .regional_indicator = false
-          else
-            .width += 2
-            | .regional_indicator = true
-          end
-
-        elif .join_next then
-          .join_next = false
-          | .regional_indicator = false
-
-        else
-          .width += (
-            if is_wide($cp) then
-              2
-            else
-              1
-            end
-          )
-          | .regional_indicator = false
-        end
-      )
-      | .width
-    '
+    printf '\033[38;2;%d;%d;%dm%s\033[0m' \
+      "$red" \
+      "$green" \
+      "$blue" \
+      "$text"
+  else
+    printf '%s' "$text"
+  fi
 }
 
 ICAL_GUY=$(find_binary ical-guy) || {
@@ -115,12 +68,12 @@ events=$(
 event_count=$(
   printf '%s' "$events" |
     "$JQ" '
-            [
-                .[]
-                | select((.status // "") != "canceled")
-            ]
-            | length
-        '
+      [
+        .[]
+        | select((.status // "") != "canceled")
+      ]
+      | length
+    '
 )
 
 if [ "$event_count" -eq 0 ]; then
@@ -131,50 +84,50 @@ fi
 event_list=$(mktemp)
 trap 'rm -f "$event_list"' EXIT INT TERM
 
-popup_width=$(tput cols 2>/dev/null || printf '100')
-display_width=$((popup_width - 6))
-
 printf '%s' "$events" |
   "$JQ" -r '
-        [
-            .[]
-            | select((.status // "") != "canceled")
-        ]
-        | sort_by(.startDate)
-        | .[]
-        | [
-            (
-                .startDate
-                | sub("\\.[0-9]+Z$"; "Z")
-                | fromdateiso8601
-                | tostring
-            ),
-            (
-                .endDate
-                | sub("\\.[0-9]+Z$"; "Z")
-                | fromdateiso8601
-                | tostring
-            ),
-            (.isAllDay | tostring),
-            (
-                .title // "(untitled)"
-                | gsub("[\t\r\n]"; " ")
-            ),
-            (
-                .calendar.title // ""
-                | gsub("[\t\r\n]"; " ")
-            ),
-            (.meetingUrl // "")
-        ]
-        | @tsv
-    ' |
+    [
+      .[]
+      | select((.status // "") != "canceled")
+    ]
+    | sort_by(.startDate)
+    | .[]
+    | [
+        (
+          .startDate
+          | sub("\\.[0-9]+Z$"; "Z")
+          | fromdateiso8601
+          | tostring
+        ),
+        (
+          .endDate
+          | sub("\\.[0-9]+Z$"; "Z")
+          | fromdateiso8601
+          | tostring
+        ),
+        (.isAllDay | tostring),
+        (
+          .title // "(untitled)"
+          | gsub("[\t\r\n]"; " ")
+        ),
+        (
+          .calendar.title // ""
+          | gsub("[\t\r\n]"; " ")
+        ),
+        (.calendar.color // ""),
+        (.meetingUrl // "")
+      ]
+      | @tsv
+  ' |
   while IFS=$'\t' read -r \
     start_epoch \
     end_epoch \
     is_all_day \
     title \
     calendar \
+    calendar_color \
     meeting_url; do
+
     if [ "$is_all_day" = "true" ]; then
       time_label="All day"
     else
@@ -189,53 +142,17 @@ printf '%s' "$events" |
       meeting_indicator=" "
     fi
 
-    if [ -n "$calendar" ]; then
-      calendar_label="[$calendar]"
-    else
-      calendar_label=""
-    fi
-
-    prefix=$(printf '%-13s %s ' \
-      "$time_label" \
-      "$meeting_indicator")
-
-    prefix_width=$(unicode_length "$prefix")
-    calendar_width=$(unicode_length "$calendar_label")
-    title_width=$(unicode_length "$title")
-
-    available_title_width=$(
-      expr "$display_width" \
-        - "$prefix_width" \
-        - "$calendar_width" \
-        - 1
+    calendar_label=$(
+      colorize_calendar "[$calendar]" "$calendar_color"
     )
 
-    if [ "$available_title_width" -lt 5 ]; then
-      available_title_width=5
-    fi
-
-    if [ "$title_width" -gt "$available_title_width" ]; then
-      truncate_width=$((available_title_width - 1))
-
-      title=$(
-        printf '%s' "$title" |
-          "$JQ" -Rr \
-            --argjson width "$truncate_width" \
-            '.[0:$width] + "…"'
-      )
-
-      title_width=$(unicode_length "$title")
-    fi
-
-    padding_width=$((available_title_width - title_width))
-
-    if [ "$padding_width" -lt 0 ]; then
-      padding_width=0
-    fi
-
-    printf -v title_padding '%*s' "$padding_width" ''
-
-    display="${prefix}${title}${title_padding} ${calendar_label}"
+    display=$(
+      printf '%-13s %s %s - %s' \
+        "$time_label" \
+        "$meeting_indicator" \
+        "$title" \
+        "$calendar_label"
+    )
 
     printf '%s\t%s\t%s\n' \
       "$display" \
@@ -245,6 +162,7 @@ printf '%s' "$events" |
 
 selection=$(
   "$FZF" \
+    --ansi \
     --delimiter=$'\t' \
     --with-nth=1 \
     --layout=reverse \
