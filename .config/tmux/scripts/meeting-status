@@ -51,7 +51,7 @@ state=$(
                     "urgent"
                 elif $minutes <= 30 then
                     "warning"
-                else
+                elif $minutes <= 60 then
                     "info"
                 end
             end
