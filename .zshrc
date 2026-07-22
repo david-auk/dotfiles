@@ -120,6 +120,7 @@ alias vi='nvim'
 alias v='nvim'
 alias tk='tmux kill-session -a'
 alias zad='ls -d */ | xargs -I {} zoxide add {}'
+alias repomix='/opt/homebrew/bin/repomix && cpfile ./repomix-output.xml'
 
 # Shell integrations
 eval "$(fzf --zsh)"

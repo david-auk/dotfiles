@@ -38,6 +38,9 @@ scroll_off = 0  # vim scrolloff — lines kept above/below the cursor (0 = off)
 time_format = "12h"  # clock format for the @time macro (12h or 24h)
 preview_max_width = 920  # max reading width for the preview (px)
 editor_max_width = 920  # max width of the editor column (px)
+completed_task_style = "none"  # none | strikethrough | gray | gray-strikethrough — style checked-task text
+math_renderer = "katex"  # katex | typst: typesetter for $…$ / $$…$$ math
+loose_math_delimiters = false  # render $$…$$ display math even with text before/after the fences
 line_number_mode = "relative"  # off | absolute | relative
 line_number_position = "text"  # text | edge
 word_wrap = true  # wrap long lines vs. scroll horizontally
@@ -46,9 +49,9 @@ pdf_embed_in_edit_mode = "compact"  # compact | full
 
 [appearance]
 pdf_export_use_theme = false  # true | false — export PDFs using the current theme instead of a clean light print theme
-theme_family = "gruvbox"  # apple | gruvbox | catppuccin | github | solarized | one | nord | tokyo-night | kanagawa | black-metal | custom
+theme_family = "catppuccin"  # apple | gruvbox | catppuccin | github | solarized | one | nord | tokyo-night | kanagawa | black-metal | custom
 theme_mode = "dark"  # light | dark | auto
-theme_id = "dark-soft"  # resolved theme id; normally set automatically from family + mode
+theme_id = "catppuccin-mocha"  # resolved theme id; normally set automatically from family + mode
 dark_sidebar = true  # tint the sidebar darker than the canvas
 show_sidebar_chevrons = true  # show disclosure arrows in the sidebar
 content_align = "center"  # center | left
@@ -62,6 +65,7 @@ mono_font = ""  # code / monospace font; empty = system default
 [view]
 note_sort_order = "none"  # none | manual | updated-desc | updated-asc | created-desc | created-asc | name-asc | name-desc
 group_by_kind = true  # group notes by kind in the list
+nested_tags = true  # show /-separated tags as a collapsible tree (sidebar + Tags view)
 view_settings_scope = "global"  # apply note/list view settings globally or per vault (global | vault)
 auto_reveal = false  # auto-expand the sidebar to the active note
 quick_note_date_title = false  # title quick notes by date instead of a timestamp

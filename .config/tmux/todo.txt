@@ -1,0 +1,3 @@
+(B) be able to copy text within tmux popups with the copy mode
+(A) enable option backspace in VIM (also SnacksExplorer)
+(D) enable option backspace in tuxeto

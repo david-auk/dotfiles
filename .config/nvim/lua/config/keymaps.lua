@@ -10,16 +10,6 @@ vim.keymap.set("n", "<leader>dd", function()
   Snacks.dashboard.open()
 end, { desc = "Open dashboard from home directory" })
 
--- E = jump to last non-blank character of current line
-vim.keymap.set({ "n", "x", "o" }, "E", "g_", {
-  desc = "Go to last non-blank character of line",
-})
-
--- B = jump to first non-blank character of current line
-vim.keymap.set({ "n", "x", "o" }, "B", "^", {
-  desc = "Go to first non-blank character of line",
-})
-
 -- Enable option backspace deleting entire word
 vim.keymap.set({ "i", "c", "t" }, "<M-BS>", "<C-w>", {
   desc = "Delete previous word",
