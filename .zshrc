@@ -130,4 +130,7 @@ eval "$(zoxide init --cmd cd zsh)"
 bindkey -M viins '^r' fzf-history-widget
 bindkey -M vicmd '^r' redo
 
+# Vi-mode macOS clipboard integration
+source "${XDG_CONFIG_HOME:-$HOME/.config}/zsh/vi-clipboard.zsh"
+
 alias s='~/.config/sesh/scripts/sesh_picker'
