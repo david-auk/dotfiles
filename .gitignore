@@ -1,2 +1,6 @@
 .config/tmux/plugins/**
 /.config/rclone/rclone.conf
+
+# Local configuration containing credentials
+.config/tuxedo/config.toml
+.config/rclone/rclone.conf
