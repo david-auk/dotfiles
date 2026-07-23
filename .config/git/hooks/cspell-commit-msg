@@ -1,0 +1,16 @@
+#!/bin/zsh
+
+set -eu
+set -o pipefail
+
+message_file=${1:?"Missing commit message file"}
+config_home=${XDG_CONFIG_HOME:-"$HOME/.config"}
+
+git stripspace --strip-comments < "$message_file" |
+  cspell lint \
+    --config "$config_home/cspell/cspell.json" \
+    --language-id markdown \
+    --no-progress \
+    --no-summary \
+    --show-suggestions \
+    "stdin://COMMIT_EDITMSG.md"
