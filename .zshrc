@@ -134,3 +134,11 @@ bindkey -M vicmd '^r' redo
 source "${XDG_CONFIG_HOME:-$HOME/.config}/zsh/vi-clipboard.zsh"
 
 alias s='~/.config/sesh/scripts/sesh_picker'
+
+# pnpm
+export PNPM_HOME="/Users/david/Library/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME/bin:"*) ;;
+  *) export PATH="$PNPM_HOME/bin:$PATH" ;;
+esac
+# pnpm end

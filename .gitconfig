@@ -5,3 +5,9 @@
     autoSetupRemote = true
 [alias]
 	ca = commit -am
+[hook "gitleaks"]
+	event = pre-commit
+	command = \"/opt/homebrew/bin/gitleaks\" git --pre-commit --redact --staged --verbose
+[hook "commit-spellcheck"]
+	event = commit-msg
+	command = \"/Users/david/.config/git/hooks/cspell-commit-msg\"
