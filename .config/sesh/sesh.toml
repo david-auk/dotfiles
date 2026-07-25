@@ -46,7 +46,12 @@ preview_command = "brew outdated"
 startup_command = "brew update && brew upgrade -y && exit 0"
 
 [[session]]
-name = "lekkeratlas backend"
+name = "LekkerAtlas Application"
+path = "~/Documents/git/hub/lekkeratlas/lekkeratlas-application"
+windows = ["runner"]
+
+[[session]]
+name = "LekkerAtlas Backend"
 path = "~/Documents/git/hub/lekkeratlas/lekkeratlas-backend"
 windows = ["runner"]
 
