@@ -29,6 +29,8 @@ fzf_path = ""  # absolute path to fzf; empty = look on $PATH
 live_preview = true  # hide markdown syntax on inactive lines
 render_tables = true  # render tables as widgets in live preview; off keeps them as plain text
 markdown_snippets = true  # auto-close markdown delimiters while typing
+auto_pairs = true  # auto-insert matching [] () and {} while typing
+auto_pair_quotes_in_prose = false  # also auto-insert matching quotes outside Markdown code
 hide_builtin_templates = false  # hide the shipped templates from the pickers
 tabs_enabled = true  # enable tab-based editing
 wrap_tabs = false  # wrap the tab strip instead of scrolling it
@@ -73,7 +75,7 @@ quick_note_title_prefix = "Quick Note"  # prefix for new quick-note titles; empt
 auto_calendar_panel = true  # auto-show the calendar for daily / weekly notes
 calendar_week_start = "monday"  # monday | sunday | locale
 calendar_show_week_numbers = true  # show ISO week numbers in the calendar
-tasks_view_mode = "kanban"  # list | calendar | kanban
+tasks_view_mode = "calendar"  # list | calendar | kanban
 kanban_group_by = "status"  # status | priority | folder
 kanban_statuses = []  # custom-status Kanban columns, in order — e.g. ["backlog", "in_progress", "review", "done"]
 

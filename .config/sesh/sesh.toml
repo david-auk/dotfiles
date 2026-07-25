@@ -42,8 +42,17 @@ startup_command = "source ~/.config/sesh/scripts/activate_venv && nvim -c ':Tele
 
 [[session]]
 name = "update brew"
-preview_command = ""
+preview_command = "brew outdated"
 startup_command = "brew update && brew upgrade -y && exit 0"
 
+[[session]]
+name = "lekkeratlas backend"
+path = "~/Documents/git/hub/lekkeratlas/lekkeratlas-backend"
+windows = ["runner"]
+
+[[window]]
+name = "runner"
+
 [default_session]
-startup_command = "nvim -c ':Telescope find_files'"
+preview_command = "eza --all --git --icons --color=always {}"
+startup_command = "tmux rename-window editor && nvim -c ':Telescope find_files'"
