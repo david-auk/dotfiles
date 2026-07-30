@@ -1,6 +1,12 @@
 -- Options are automatically loaded before lazy.nvim startup
--- Default options that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/options.lua
--- Add any additional options here
+-- Default options that are always set:
+-- https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/options.lua
+
+-- Automatically run configured formatters when saving.
+vim.g.autoformat = true
+
+-- ESLint fixes are applied separately through LspEslintFixAll.
+vim.g.lazyvim_eslint_auto_format = false
 
 -- LSP Server to use for Rust.
 -- Set to "bacon-ls" to use bacon-ls instead of rust-analyzer.

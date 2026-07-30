@@ -72,16 +72,32 @@ while true; do
     fi
     ;;
 
+  ctrl-x)
+    if confirm_decline_event "$events_file" "$event_id" &&
+      decline_event "$events_file" "$event_id"; then
+      exit 0
+    fi
+    ;;
+
   enter | "")
     detail_action=$(
       show_event_details "$events_file" "$event_id"
     ) || continue
 
-    if [ "$detail_action" = "ctrl-o" ]; then
+    case "$detail_action" in
+    ctrl-o)
       if open_event_meeting "$events_file" "$event_id"; then
         exit 0
       fi
-    fi
+      ;;
+
+    ctrl-x)
+      if confirm_decline_event "$events_file" "$event_id" &&
+        decline_event "$events_file" "$event_id"; then
+        exit 0
+      fi
+      ;;
+    esac
     ;;
   esac
 done

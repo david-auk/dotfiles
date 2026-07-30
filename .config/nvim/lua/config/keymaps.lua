@@ -31,6 +31,19 @@ vim.keymap.set(
   { desc = "Tmux Navigate Right", remap = false, silent = true }
 )
 
+-- Aliases for LazyVim's default Git hunk navigation.
+vim.keymap.set("n", "]g", "]h", {
+  remap = true,
+  silent = true,
+  desc = "Next Git hunk",
+})
+
+vim.keymap.set("n", "[g", "[h", {
+  remap = true,
+  silent = true,
+  desc = "Previous Git hunk",
+})
+
 -- Java / Gradle helpers
 
 local function project_root()

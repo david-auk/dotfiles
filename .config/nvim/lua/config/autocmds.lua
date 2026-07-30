@@ -29,3 +29,37 @@ vim.api.nvim_create_autocmd("LspAttach", {
     end
   end,
 })
+
+local eslint_fix_group = vim.api.nvim_create_augroup("EslintFixOnSave", {
+  clear = true,
+})
+
+vim.api.nvim_create_autocmd("LspAttach", {
+  group = eslint_fix_group,
+
+  callback = function(event)
+    local client = vim.lsp.get_client_by_id(event.data.client_id)
+
+    if not client or client.name ~= "eslint" then
+      return
+    end
+
+    -- Avoid duplicate save hooks if ESLint reconnects.
+    vim.api.nvim_clear_autocmds({
+      group = eslint_fix_group,
+      event = "BufWritePre",
+      buffer = event.buf,
+    })
+
+    vim.api.nvim_create_autocmd("BufWritePre", {
+      group = eslint_fix_group,
+      buffer = event.buf,
+
+      callback = function()
+        vim.cmd("LspEslintFixAll")
+      end,
+
+      desc = "Fix all auto-fixable ESLint problems before saving",
+    })
+  end,
+})

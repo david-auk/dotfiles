@@ -41,8 +41,8 @@ path = "~/Documents/git/lab/naturalis/s3-devkit/"
 startup_command = "source ~/.config/sesh/scripts/activate_venv && nvim -c ':Telescope find_files'"
 
 [[session]]
-name = "update brew"
-preview_command = "brew outdated"
+name = "Update Brew"
+preview_command = "brew update && brew outdated"
 startup_command = "brew update && brew upgrade -y && exit 0"
 
 [[session]]
@@ -53,10 +53,14 @@ windows = ["runner"]
 [[session]]
 name = "LekkerAtlas Backend"
 path = "~/Documents/git/hub/lekkeratlas/lekkeratlas-backend"
-windows = ["runner"]
+windows = ["runner", "database viewer"]
 
 [[window]]
 name = "runner"
+
+[[window]]
+name = "database viewer"
+startup_script = "gobang"
 
 [default_session]
 preview_command = "eza --all --git --icons --color=always {}"

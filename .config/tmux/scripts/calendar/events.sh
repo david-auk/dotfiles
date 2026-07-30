@@ -73,6 +73,22 @@ get_event_title() {
     ' "$events_file"
 }
 
+get_event_current_user_status() {
+  local events_file=$1
+  local event_id=$2
+
+  "$JQ" -r \
+    --arg event_id "$event_id" '
+      first(
+        .[]
+        | select(.id == $event_id)
+        | (.attendees // [])[]
+        | select(.isCurrentuser == true)
+        | .status
+      ) // empty
+    ' "$events_file"
+}
+
 get_event_meeting_url() {
   local events_file=$1
   local event_id=$2

@@ -1,2 +1,5 @@
-(C) LTeX fix quickactions add to dictionary
+x 2026-07-30 2026-07-30 LTeX fix quickactions add to dictionary
 (B) Fix yaml custom scheme def like yaml-language-server: for authentiks language
+2026-07-30 quickswitch git branches like C-l in sesh
+x 2026-07-30 2026-07-30 new way to move around git hunks than ]h due to you not being able to utalize both hands
+x 2026-07-30 2026-07-30 Beter visualisation of when recording. im always recording without knowing it

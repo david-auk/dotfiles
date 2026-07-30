@@ -20,9 +20,9 @@ select_event() {
       --prompt='Calendar › ' \
       --pointer='›' \
       --no-multi \
-      --expect=enter,ctrl-o \
+      --expect=enter,ctrl-o,ctrl-x \
       --bind="load:pos($default_position)" \
-      --header='Enter: details  •  Ctrl-o: open meeting  •  󰍉 has meeting link  •  Esc: close' \
+      --header='Enter: details  •  Ctrl-o: open meeting  •  Ctrl-x: decline  •  󰍉 has meeting link  •  Esc: close' \
       --header-first \
       <"$event_rows_file"
   ) || return 1
@@ -87,7 +87,7 @@ show_event_details() {
         --no-multi \
         --prompt='' \
         --pointer='' \
-        --expect=enter,ctrl-o \
+        --expect=enter,ctrl-o,ctrl-x \
         --bind='j:preview-down' \
         --bind='k:preview-up' \
         --bind='ctrl-d:preview-half-page-down' \
@@ -96,7 +96,7 @@ show_event_details() {
         --bind='G:preview-bottom' \
         --preview="cat -- '$details_file'" \
         --preview-window='up,90%,wrap,border-none' \
-        --header='j/k: scroll  •  C-d/C-u: half page  •  g/G: top/bottom  •  Enter/Esc: back  •  Ctrl-o: open' \
+        --header='j/k: scroll  •  C-d/C-u: half page  •  g/G: top/bottom  •  Enter/Esc: back  •  Ctrl-o: open  •  Ctrl-x: decline' \
         --header-first
   ); then
     rm -f "$details_file"
@@ -108,4 +108,44 @@ show_event_details() {
   key=${result%%$'\n'*}
 
   printf '%s\n' "${key:-enter}"
+}
+
+confirm_decline_event() {
+  local events_file=$1
+  local event_id=$2
+  local title
+  local header
+  local answer
+
+  title=$(
+    get_event_title \
+      "$events_file" \
+      "$event_id"
+  )
+
+  title=${title//$'\r'/ }
+  title=${title//$'\n'/ }
+
+  printf -v header \
+    'Decline "%s"?' \
+    "$title"
+
+  answer=$(
+    printf '%s\n' \
+      "Cancel" \
+      "Decline meeting" |
+      "$FZF" \
+        --no-sort \
+        --layout=reverse \
+        --border=rounded \
+        --no-info \
+        --prompt='Confirm › ' \
+        --pointer='›' \
+        --no-multi \
+        --bind='load:pos(1)' \
+        --header="$header" \
+        --header-first
+  ) || return 1
+
+  [ "$answer" = "Decline meeting" ]
 }
