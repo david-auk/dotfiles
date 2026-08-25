@@ -1,30 +1,5 @@
 return {
   "neovim/nvim-lspconfig",
-  opts = {
-    servers = {
-      jdtls = {
-        settings = {
-          java = {
-            completion = {
-              importOrder = {
-                "java",
-                "javax",
-                "org",
-                "com",
-                "io",
-                "nl",
-              },
-            },
-          },
-        },
-      },
-    },
-    setup = {
-      jdtls = function()
-        return true -- avoid duplicate servers
-      end,
-    },
-  },
 
   init = function()
     local function restart_jdtls()

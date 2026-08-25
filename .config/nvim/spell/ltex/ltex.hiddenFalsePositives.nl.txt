@@ -1,0 +1,4 @@
+{"rule":"EINDE_ZIN_ONVERWACHT","sentence":"^\\QNieuw keukenkastje\nx Draad\n Kastje verplaatsen\n Licht repareren\n posters inlijsten\n tassen een plek geven\\E$"}
+{"rule":"EINDE_ZIN_ONVERWACHT","sentence":"^\\QDweilen\n Natte lab over vlaktes halen\n Stof achter bed zuigen\n stof stof van randjes zuigen\\E$"}
+{"rule":"MORFOLOGIK_RULE_NL_NL","sentence":"^\\QDeepclean\\E$"}
+{"rule":"UPPERCASE_SENTENCE_START","sentence":"^\\Qx Dweilen\nx wc schoonmaken\nx wc-bril schoonmaken\nx wc-pot schoonmaken\\E$"}

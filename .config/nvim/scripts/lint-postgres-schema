@@ -1,0 +1,142 @@
+#!/usr/bin/env bash
+
+set -uo pipefail
+
+workspace_root="${1:?Usage: lint-postgres-schema <workspace-root> <schema-dir> <current-file>}"
+schema_dir="${2:?Usage: lint-postgres-schema <workspace-root> <schema-dir> <current-file>}"
+current_file="${3:?Usage: lint-postgres-schema <workspace-root> <schema-dir> <current-file>}"
+
+if [[ "${schema_dir}" != /* ]]; then
+  schema_dir="${workspace_root}/${schema_dir}"
+fi
+
+if [[ ! -d "${schema_dir}" ]]; then
+  printf \
+    'psql:%s:1: ERROR: schema directory does not exist: %s\n' \
+    "${current_file}" \
+    "${schema_dir}" \
+    >&2
+  exit 1
+fi
+
+if ! command -v docker >/dev/null 2>&1; then
+  printf \
+    'psql:%s:1: ERROR: required command not found: docker\n' \
+    "${current_file}" \
+    >&2
+  exit 1
+fi
+
+if ! docker info >/dev/null 2>&1; then
+  printf \
+    'psql:%s:1: ERROR: Docker is not running\n' \
+    "${current_file}" \
+    >&2
+  exit 1
+fi
+
+postgres_image="${PG_LINT_IMAGE:-postgres:16-alpine}"
+container_name="nvim-postgres-lint-${UID:-0}-$$"
+
+cleanup() {
+  docker rm --force "${container_name}" >/dev/null 2>&1 || true
+}
+
+trap cleanup EXIT INT TERM
+
+if ! container_output="$(
+  docker run \
+    --detach \
+    --name "${container_name}" \
+    --env POSTGRES_DB=lint \
+    --env POSTGRES_USER=lint \
+    --env POSTGRES_PASSWORD=lint \
+    --volume "${schema_dir}:/docker-entrypoint-initdb.d:ro" \
+    "${postgres_image}" \
+    2>&1
+)"; then
+  container_output="${container_output//$'\n'/ }"
+
+  printf \
+    'psql:%s:1: ERROR: could not start temporary PostgreSQL container: %s\n' \
+    "${current_file}" \
+    "${container_output}" \
+    >&2
+  exit 1
+fi
+
+initialization_succeeded=false
+logs=""
+
+# PostgreSQL starts an internal temporary server while executing the schema.
+# Do not use pg_isready here because it can report success before all schema
+# files have been processed.
+for _ in {1..60}; do
+  logs="$(docker logs "${container_name}" 2>&1 || true)"
+
+  if grep -Fq \
+    "PostgreSQL init process complete; ready for start up." \
+    <<<"${logs}"; then
+    initialization_succeeded=true
+    break
+  fi
+
+  # Stop waiting as soon as psql reports an invalid schema.
+  if grep -Eq \
+    'psql:/docker-entrypoint-initdb.d/.*:[0-9]+: ERROR:' \
+    <<<"${logs}"; then
+    break
+  fi
+
+  running="$(
+    docker inspect \
+      --format '{{.State.Running}}' \
+      "${container_name}" \
+      2>/dev/null ||
+      printf 'false'
+  )"
+
+  if [[ "${running}" != "true" ]]; then
+    break
+  fi
+
+  sleep 0.5
+done
+
+if [[ "${initialization_succeeded}" == "true" ]]; then
+  exit 0
+fi
+
+logs="$(docker logs "${container_name}" 2>&1 || true)"
+
+# Convert container paths back to real project paths so the nvim-lint parser
+# can attach errors to the correct SQL file.
+container_prefix="psql:/docker-entrypoint-initdb.d/"
+host_prefix="psql:${schema_dir}/"
+rewritten_logs="${logs//${container_prefix}/${host_prefix}}"
+
+if grep -Eq \
+  'psql:.*:[0-9]+: (ERROR|FATAL):' \
+  <<<"${rewritten_logs}"; then
+  printf '%s\n' "${rewritten_logs}" >&2
+  exit 1
+fi
+
+# Handle failures that did not originate from a SQL statement.
+failure_summary="$(
+  printf '%s\n' "${rewritten_logs}" |
+    tail -n 20 |
+    tr '\n' ' '
+)"
+
+if [[ -z "${failure_summary// /}" ]]; then
+  failure_summary="PostgreSQL initialization did not complete"
+fi
+
+printf \
+  'psql:%s:1: ERROR: temporary PostgreSQL validation failed: %s\n' \
+  "${current_file}" \
+  "${failure_summary}" \
+  >&2
+
+exit 1

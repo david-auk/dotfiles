@@ -132,7 +132,7 @@ return {
             },
           },
 
-          on_attach = function()
+          on_attach = function(_, bufnr)
             -- Do not provide `server_opts` here.
             -- LazyVim already started and attached ltex_plus.
             require("ltex_extra").setup({
@@ -141,10 +141,26 @@ return {
                 "en-US",
               },
 
-              init_check = true,
+              -- Loading is done explicitly below so ltex_extra searches for
+              -- the client in the buffer that actually attached ltex_plus.
+              init_check = false,
+
               path = ltex_directory,
               log_level = "none",
             })
+
+            local commands = require("ltex_extra.commands-lsp")
+
+            vim.api.nvim_buf_call(bufnr, function()
+              for _, language in ipairs({
+                "nl-NL",
+                "en-US",
+              }) do
+                commands.updateConfig("dictionary", language)
+                commands.updateConfig("disabledRules", language)
+                commands.updateConfig("hiddenFalsePositives", language)
+              end
+            end)
           end,
         },
       },

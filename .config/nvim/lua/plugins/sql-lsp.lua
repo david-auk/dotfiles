@@ -33,7 +33,6 @@ return {
     end,
   },
 
-  -- Configure pgls as an LSP server.
   {
     "neovim/nvim-lspconfig",
     opts = {
@@ -52,49 +51,6 @@ return {
 
           workspace_required = true,
         },
-      },
-    },
-  },
-
-  -- Ensure pgformatter is installed through Mason.
-  {
-    "mason-org/mason.nvim",
-    opts = {
-      ensure_installed = {
-        "pgformatter",
-      },
-    },
-  },
-
-  -- Use pg_format for SQL formatting.
-  {
-    "stevearc/conform.nvim",
-    opts = function(_, opts)
-      opts.formatters_by_ft = opts.formatters_by_ft or {}
-      opts.formatters = opts.formatters or {}
-
-      opts.formatters.pg_format_local = {
-        command = vim.fn.expand("~/Documents/git/hub/pgFormatter/pg_format"),
-        args = {
-          "--vertical-align",
-          "--no-space-function",
-          "-",
-        },
-        stdin = true,
-      }
-
-      opts.formatters_by_ft.sql = {
-        "pg_format_local",
-      }
-    end,
-  },
-
-  -- SQL Treesitter highlighting.
-  {
-    "nvim-treesitter/nvim-treesitter",
-    opts = {
-      ensure_installed = {
-        "sql",
       },
     },
   },

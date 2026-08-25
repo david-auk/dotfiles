@@ -48,15 +48,11 @@ startup_command = "brew update && brew upgrade -y && exit 0"
 [[session]]
 name = "LekkerAtlas Application"
 path = "~/Documents/git/hub/lekkeratlas/lekkeratlas-application"
-windows = ["runner"]
 
 [[session]]
 name = "LekkerAtlas Backend"
 path = "~/Documents/git/hub/lekkeratlas/lekkeratlas-backend"
-windows = ["runner", "database viewer"]
-
-[[window]]
-name = "runner"
+windows = ["database viewer"]
 
 [[window]]
 name = "database viewer"
@@ -64,4 +60,4 @@ startup_script = "gobang"
 
 [default_session]
 preview_command = "eza --all --git --icons --color=always {}"
-startup_command = "tmux rename-window editor && nvim -c ':Telescope find_files'"
+startup_command = "nvim -c ':Telescope find_files'"

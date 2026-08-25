@@ -2,6 +2,7 @@
 
 export PATH="/System/Volumes/Data/Users/david/Library/Python/3.9/bin/:/usr/local/sbin:$PATH"
 export PATH="$PATH:$(go env GOPATH)/bin"
+export XDG_CONFIG_HOME="$HOME/.config"
 
 # Add the path for UV
 export PATH="/Users/david/.local/bin:$PATH"
@@ -138,7 +139,8 @@ alias s='~/.config/sesh/scripts/sesh_picker'
 # pnpm
 export PNPM_HOME="/Users/david/Library/pnpm"
 case ":$PATH:" in
-  *":$PNPM_HOME/bin:"*) ;;
-  *) export PATH="$PNPM_HOME/bin:$PATH" ;;
+*":$PNPM_HOME/bin:"*) ;;
+*) export PATH="$PNPM_HOME/bin:$PATH" ;;
 esac
 # pnpm end
+export PATH="$(brew --prefix libpq)/bin:$PATH"
