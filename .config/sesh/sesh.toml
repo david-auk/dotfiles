@@ -52,11 +52,6 @@ path = "~/Documents/git/hub/lekkeratlas/lekkeratlas-application"
 [[session]]
 name = "LekkerAtlas Backend"
 path = "~/Documents/git/hub/lekkeratlas/lekkeratlas-backend"
-windows = ["database viewer"]
-
-[[window]]
-name = "database viewer"
-startup_script = "gobang"
 
 [default_session]
 preview_command = "eza --all --git --icons --color=always {}"

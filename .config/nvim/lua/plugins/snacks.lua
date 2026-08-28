@@ -45,6 +45,56 @@ return {
         vim.cmd("wincmd l")
       end
 
+      -- Git add functionallity
+      explorer.actions.git_add = function(_, item)
+        if not item then
+          vim.notify("No file selected", vim.log.levels.WARN, {
+            title = "Git",
+          })
+          return
+        end
+
+        if item.dir then
+          vim.notify("Cannot stage a directory with this action", vim.log.levels.WARN, {
+            title = "Git",
+          })
+          return
+        end
+
+        local file = Snacks.picker.util.path(item)
+
+        if not file or file == "" then
+          vim.notify("Could not determine selected file", vim.log.levels.ERROR, {
+            title = "Git",
+          })
+          return
+        end
+
+        vim.system({
+          "git",
+          "add",
+          file,
+        }, {
+          cwd = LazyVim.root(),
+          text = true,
+        }, function(result)
+          vim.schedule(function()
+            if result.code ~= 0 then
+              vim.notify(
+                vim.trim(result.stderr or "Could not stage selected file"),
+                vim.log.levels.ERROR,
+                { title = "Git" }
+              )
+              return
+            end
+
+            vim.notify("Staged " .. vim.fn.fnamemodify(file, ":t"), {
+              title = "Git",
+            })
+          end)
+        end)
+      end
+
       explorer.win = explorer.win or {}
 
       explorer.win.input = explorer.win.input or {}
@@ -58,6 +108,8 @@ return {
         win.keys["<c-j>"] = { "tmux_down_pane", mode = { "i", "n" } }
         win.keys["<c-k>"] = { "tmux_up_pane", mode = { "i", "n" } }
         win.keys["<c-l>"] = { "nvim_right_window", mode = { "i", "n" } }
+
+        win.keys["<leader>ga"] = { "git_add", mode = { "i", "n" } }
       end
     end,
   },

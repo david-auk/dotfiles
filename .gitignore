@@ -4,3 +4,5 @@
 # Local configuration containing credentials
 .config/tuxedo/config.toml
 .config/rclone/rclone.conf
+/.config/nvim/spell/personal.utf-8.add.spl
+/.config/nvim/spell/personal.utf-8.add

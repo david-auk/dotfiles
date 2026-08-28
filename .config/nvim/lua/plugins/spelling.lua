@@ -110,7 +110,7 @@ return {
           settings = {
             ltex = {
               -- Use Dutch grammar by default.
-              language = "nl-NL",
+              language = "en-US",
 
               checkFrequency = "edit",
 
@@ -121,12 +121,12 @@ return {
               -- Spelling is handled by Neovim using `spelllang`.
               -- LTeX+ remains responsible for grammar and style.
               disabledRules = {
-                ["nl-NL"] = {
-                  "MORFOLOGIK_RULE_NL_NL",
-                },
-
                 ["en-US"] = {
                   "MORFOLOGIK_RULE_EN_US",
+                },
+
+                ["nl-NL"] = {
+                  "MORFOLOGIK_RULE_NL_NL",
                 },
               },
             },
