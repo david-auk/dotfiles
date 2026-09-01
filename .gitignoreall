@@ -1,2 +1,6 @@
 # Macos
 .DS_Store
+
+# Workflow
+repomix-output.xml
+*.patch

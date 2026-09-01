@@ -22,11 +22,30 @@ return {
 
       opts.formatters.pg_format_local = {
         command = vim.fn.expand("~/Documents/git/hub/pgFormatter/pg_format"),
+
         args = {
           "--vertical-align",
+
+          -- foo(...) instead of foo (...)
           "--no-space-function",
+
+          -- Alternative formatting:
+          -- notably puts function/procedure parameters on separate lines.
+          "--format-type",
+
+          -- Break INSERT column/value lists rather than collapsing them.
+          "--comma-break",
+
+          -- Don't allow pgFormatter to create enormous single lines.
+          -- "--wrap-limit",
+          -- "100",
+
+          -- Preserve intentional empty lines inside PL/pgSQL.
+          "--keep-newline",
+
           "-",
         },
+
         stdin = true,
       }
 
