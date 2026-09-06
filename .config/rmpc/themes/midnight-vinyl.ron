@@ -1,0 +1,675 @@
+#![enable(implicit_some)]
+#![enable(unwrap_newtypes)]
+#![enable(unwrap_variant_newtypes)]
+
+(
+    // ─────────────────────────────────────────────────────────────
+    // Midnight Vinyl
+    // ─────────────────────────────────────────────────────────────
+
+    draw_borders: false,
+    show_song_table_header: true,
+
+    background_color: "#111318",
+    text_color: "#c9d1d9",
+
+    header_background_color: None,
+    modal_background_color: "#181b22",
+    modal_backdrop: true,
+
+    default_album_art_path: None,
+
+    format_tag_separator: " • ",
+    multiple_tag_resolution_strategy: Last,
+
+    // ─────────────────────────────────────────────────────────────
+    // General styles
+    // ─────────────────────────────────────────────────────────────
+
+    preview_label_style: (
+        fg: "#7aa2f7",
+        modifiers: "Bold",
+    ),
+
+    preview_metadata_group_style: (
+        fg: "#89ddff",
+        modifiers: "Bold",
+    ),
+
+    level_styles: (
+        info: (
+            fg: "#7aa2f7",
+            bg: "#111318",
+        ),
+        warn: (
+            fg: "#e0af68",
+            bg: "#111318",
+        ),
+        error: (
+            fg: "#f7768e",
+            bg: "#111318",
+        ),
+        debug: (
+            fg: "#9ece6a",
+            bg: "#111318",
+        ),
+        trace: (
+            fg: "#bb9af7",
+            bg: "#111318",
+        ),
+    ),
+
+    // ─────────────────────────────────────────────────────────────
+    // Player components
+    // ─────────────────────────────────────────────────────────────
+
+    components: {
+        "state": Pane(Property(
+            content: [
+                (
+                    kind: Property(Status(StateV2(
+                        playing_label: "󰐊  PLAYING",
+                        paused_label: "󰏤  PAUSED",
+                        stopped_label: "󰓛  STOPPED",
+
+                        playing_style: (
+                            fg: "#7dcfff",
+                            modifiers: "Bold",
+                        ),
+                        paused_style: (
+                            fg: "#e0af68",
+                            modifiers: "Bold",
+                        ),
+                        stopped_style: (
+                            fg: "#565f89",
+                        ),
+                    ))),
+                ),
+            ],
+            align: Left,
+        )),
+
+        "title": Pane(Property(
+            content: [
+                (
+                    kind: Property(Song(Title)),
+                    style: (
+                        fg: "#c0caf5",
+                        modifiers: "Bold",
+                    ),
+                    default: (
+                        kind: Text("Nothing playing"),
+                        style: (
+                            fg: "#565f89",
+                            modifiers: "Dim",
+                        ),
+                    ),
+                ),
+            ],
+            align: Center,
+            scroll_speed: 1,
+        )),
+
+        "artist_album": Pane(Property(
+            content: [
+                (
+                    kind: Property(Song(Artist)),
+                    style: (
+                        fg: "#7aa2f7",
+                        modifiers: "Bold",
+                    ),
+                    default: (
+                        kind: Text("Unknown Artist"),
+                        style: (
+                            fg: "#565f89",
+                        ),
+                    ),
+                ),
+
+                (
+                    kind: Text("  •  "),
+                    style: (
+                        fg: "#3b4261",
+                    ),
+                ),
+
+                (
+                    kind: Property(Song(Album)),
+                    style: (
+                        fg: "#a9b1d6",
+                    ),
+                    default: (
+                        kind: Text("Unknown Album"),
+                        style: (
+                            fg: "#565f89",
+                        ),
+                    ),
+                ),
+            ],
+            align: Center,
+            scroll_speed: 1,
+        )),
+
+        "volume": Split(
+            direction: Horizontal,
+            panes: [
+                (
+                    size: "100%",
+                    pane: Pane(Property(
+                        content: [
+                            (
+                                kind: Property(Widget(Volume)),
+                                style: (
+                                    fg: "#7dcfff",
+                                ),
+                            ),
+                        ],
+                        align: Right,
+                    )),
+                ),
+                (
+                    size: "4",
+                    pane: Pane(Property(
+                        content: [
+                            (
+                                kind: Property(Status(Volume)),
+                                style: (
+                                    fg: "#a9b1d6",
+                                ),
+                            ),
+                            (
+                                kind: Text("%"),
+                                style: (
+                                    fg: "#565f89",
+                                ),
+                            ),
+                        ],
+                        align: Right,
+                    )),
+                ),
+            ],
+        ),
+
+        "modes": Pane(Property(
+            content: [
+                (
+                    kind: Property(Status(RepeatV2(
+                        on_label: "󰑖 ",
+                        off_label: "󰑖 ",
+                        on_style: (
+                            fg: "#7dcfff",
+                            modifiers: "Bold",
+                        ),
+                        off_style: (
+                            fg: "#3b4261",
+                            modifiers: "Dim",
+                        ),
+                    ))),
+                ),
+
+                (
+                    kind: Property(Status(RandomV2(
+                        on_label: "󰒟 ",
+                        off_label: "󰒟 ",
+                        on_style: (
+                            fg: "#7dcfff",
+                            modifiers: "Bold",
+                        ),
+                        off_style: (
+                            fg: "#3b4261",
+                            modifiers: "Dim",
+                        ),
+                    ))),
+                ),
+
+                (
+                    kind: Property(Status(SingleV2(
+                        on_label: "󰑘 ",
+                        off_label: "󰑘 ",
+                        oneshot_label: "󰑘 ",
+                        on_style: (
+                            fg: "#7dcfff",
+                            modifiers: "Bold",
+                        ),
+                        off_style: (
+                            fg: "#3b4261",
+                            modifiers: "Dim",
+                        ),
+                        oneshot_style: (
+                            fg: "#bb9af7",
+                            modifiers: "Bold",
+                        ),
+                    ))),
+                ),
+
+                (
+                    kind: Property(Status(ConsumeV2(
+                        on_label: "󰆴 ",
+                        off_label: "󰆴 ",
+                        oneshot_label: "󰆴 ",
+                        on_style: (
+                            fg: "#7dcfff",
+                            modifiers: "Bold",
+                        ),
+                        off_style: (
+                            fg: "#3b4261",
+                            modifiers: "Dim",
+                        ),
+                        oneshot_style: (
+                            fg: "#bb9af7",
+                            modifiers: "Bold",
+                        ),
+                    ))),
+                ),
+            ],
+            align: Right,
+        )),
+
+        "time": Pane(Property(
+            content: [
+                (
+                    kind: Property(Status(Elapsed)),
+                    style: (
+                        fg: "#7dcfff",
+                        modifiers: "Bold",
+                    ),
+                ),
+                (
+                    kind: Text(" / "),
+                    style: (
+                        fg: "#565f89",
+                    ),
+                ),
+                (
+                    kind: Property(Status(Duration)),
+                    style: (
+                        fg: "#a9b1d6",
+                    ),
+                ),
+            ],
+            align: Right,
+        )),
+
+        "top_row": Split(
+            direction: Horizontal,
+            panes: [
+                (
+                    size: "18",
+                    pane: Component("state"),
+                ),
+                (
+                    size: "100%",
+                    pane: Component("title"),
+                ),
+                (
+                    size: "18",
+                    pane: Component("volume"),
+                ),
+            ],
+        ),
+
+        "bottom_row": Split(
+            direction: Horizontal,
+            panes: [
+                (
+                    size: "18",
+                    pane: Pane(Property(
+                        content: [
+                            (
+                                kind: Property(Status(Bitrate)),
+                                style: (
+                                    fg: "#565f89",
+                                ),
+                            ),
+                            (
+                                kind: Text(" kbps"),
+                                style: (
+                                    fg: "#3b4261",
+                                ),
+                            ),
+                        ],
+                        align: Left,
+                    )),
+                ),
+                (
+                    size: "100%",
+                    pane: Component("artist_album"),
+                ),
+                (
+                    size: "18",
+                    pane: Component("modes"),
+                ),
+            ],
+        ),
+
+        "header": Split(
+            direction: Vertical,
+            panes: [
+                (
+                    size: "1",
+                    pane: Component("top_row"),
+                ),
+                (
+                    size: "1",
+                    pane: Component("bottom_row"),
+                ),
+            ],
+        ),
+
+        "progress": Split(
+            direction: Horizontal,
+            panes: [
+                (
+                    size: "3",
+                    pane: Pane(Property(
+                        content: [
+                            (
+                                kind: Property(Status(StateV2(
+                                    playing_label: "󰐊",
+                                    paused_label: "󰏤",
+                                    stopped_label: "󰓛",
+
+                                    playing_style: (
+                                        fg: "#7dcfff",
+                                    ),
+                                    paused_style: (
+                                        fg: "#e0af68",
+                                    ),
+                                    stopped_style: (
+                                        fg: "#565f89",
+                                    ),
+                                ))),
+                            ),
+                        ],
+                        align: Center,
+                    )),
+                ),
+
+                (
+                    size: "100%",
+                    pane: Pane(ProgressBar),
+                ),
+
+                (
+                    size: "13",
+                    pane: Component("time"),
+                ),
+            ],
+        ),
+    },
+
+    // ─────────────────────────────────────────────────────────────
+    // Overall layout
+    // ─────────────────────────────────────────────────────────────
+
+    layout: Split(
+        direction: Vertical,
+        panes: [
+            (
+                size: "4",
+                borders: "BOTTOM",
+                pane: Component("header"),
+            ),
+
+            (
+                size: "3",
+                borders: "BOTTOM",
+                pane: Pane(Tabs),
+            ),
+
+            (
+                size: "100%",
+                pane: Pane(TabContent),
+            ),
+
+            (
+                size: "3",
+                borders: "TOP",
+                pane: Component("progress"),
+            ),
+        ],
+    ),
+
+    // ─────────────────────────────────────────────────────────────
+    // Tabs / selections
+    // ─────────────────────────────────────────────────────────────
+
+    tab_bar: (
+        active_style: (
+            fg: "#111318",
+            bg: "#7aa2f7",
+            modifiers: "Bold",
+        ),
+
+        inactive_style: (
+            fg: "#565f89",
+            bg: "#111318",
+        ),
+    ),
+
+    highlighted_item_style: (
+        fg: "#7dcfff",
+        bg: "#111318",
+        modifiers: "Bold",
+    ),
+
+    current_item_style: (
+        fg: "#111318",
+        bg: "#7aa2f7",
+        modifiers: "Bold",
+    ),
+
+    borders_style: (
+        fg: "#292e42",
+    ),
+
+    highlight_border_style: (
+        fg: "#7aa2f7",
+    ),
+
+    // ─────────────────────────────────────────────────────────────
+    // Progress bar
+    // ─────────────────────────────────────────────────────────────
+
+    progress_bar: (
+        symbols: [
+            "━",
+            "━",
+            "●",
+            "━",
+            "━",
+        ],
+
+        track_style: (
+            fg: "#292e42",
+        ),
+
+        elapsed_style: (
+            fg: "#7aa2f7",
+        ),
+
+        thumb_style: (
+            fg: "#7dcfff",
+        ),
+    ),
+
+    // ─────────────────────────────────────────────────────────────
+    // Scrollbar
+    // ─────────────────────────────────────────────────────────────
+
+    scrollbar: (
+        symbols: [
+            "│",
+            "┃",
+            "▲",
+            "▼",
+        ],
+
+        track_style: (
+            fg: "#292e42",
+        ),
+
+        ends_style: (
+            fg: "#3b4261",
+        ),
+
+        thumb_style: (
+            fg: "#565f89",
+        ),
+    ),
+
+    // ─────────────────────────────────────────────────────────────
+    // Browser / queue
+    // ─────────────────────────────────────────────────────────────
+
+    symbols: (
+        song: "󰎈",
+        dir: "󰉋",
+        playlist: "󰲸",
+        marker: "● ",
+        ellipsis: "…",
+
+        song_style: (
+            fg: "#7aa2f7",
+        ),
+
+        dir_style: (
+            fg: "#e0af68",
+        ),
+
+        playlist_style: (
+            fg: "#bb9af7",
+        ),
+    ),
+
+    browser_column_widths: [
+        24,
+        38,
+        38,
+    ],
+
+    browser_song_format: [
+        (
+            kind: Group([
+                (
+                    kind: Property(Track),
+                    style: (
+                        fg: "#565f89",
+                    ),
+                ),
+                (
+                    kind: Text("  "),
+                ),
+            ]),
+        ),
+
+        (
+            kind: Property(Other("name")),
+            default: (
+                kind: Group([
+                    (
+                        kind: Property(Artist),
+                        style: (
+                            fg: "#7aa2f7",
+                        ),
+                    ),
+                    (
+                        kind: Text("  •  "),
+                        style: (
+                            fg: "#3b4261",
+                        ),
+                    ),
+                    (
+                        kind: Property(Title),
+                    ),
+                ]),
+                default: (
+                    kind: Property(Filename),
+                ),
+            ),
+        ),
+    ],
+
+    song_table_album_separator: None,
+
+    song_table_format: [
+        (
+            prop: (
+                kind: Property(Position),
+            ),
+            width: "4",
+            alignment: Right,
+            label: "#",
+        ),
+
+        (
+            prop: (
+                kind: Property(Title),
+                default: (
+                    kind: Text("Unknown"),
+                ),
+            ),
+            width: "40%",
+            label: "Title",
+        ),
+
+        (
+            prop: (
+                kind: Property(
+                    Other("albumartist")
+                ),
+                default: (
+                    kind: Property(Artist),
+                    default: (
+                        kind: Text("Unknown")
+                    ),
+                ),
+            ),
+            width: "25%",
+            label: "Artist",
+        ),
+
+        (
+            prop: (
+                kind: Property(Album),
+                default: (
+                    kind: Text("Unknown Album"),
+                ),
+            ),
+            width: "35%",
+            label: "Album",
+        ),
+
+        (
+            prop: (
+                kind: Property(Duration),
+                default: (
+                    kind: Text("-"),
+                ),
+            ),
+            width: "6",
+            alignment: Right,
+            label: "Time",
+        ),
+    ],
+
+    lyrics: (
+        timestamp: false,
+    ),
+
+    cava: (
+        bar_width: 1,
+        bar_spacing: 1,
+        orientation: Bottom,
+
+        bar_color: Gradient({
+            0: "#7aa2f7",
+            50: "#7dcfff",
+            100: "#bb9af7",
+        }),
+    ),
+
+    header: (
+        rows: [],
+    ),
+)

@@ -1,5 +1,8 @@
 #:schema https://github.com/joshmedeski/sesh/raw/main/sesh.schema.json
 
+[tui]
+show_windows = true
+
 [[window]]
 name = "tuxedo"
 startup_script = "tuxedo todo.txt"
@@ -52,6 +55,11 @@ path = "~/Documents/git/hub/lekkeratlas/lekkeratlas-application"
 [[session]]
 name = "LekkerAtlas Backend"
 path = "~/Documents/git/hub/lekkeratlas/lekkeratlas-backend"
+
+[[session]]
+name = "Notes"
+path = "~/notes"
+startup_command = "nvim +'lua require(\"config.notes\").open_today()'"
 
 [default_session]
 preview_command = "eza --all --git --icons --color=always {}"

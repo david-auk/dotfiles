@@ -63,3 +63,12 @@ vim.api.nvim_create_autocmd("LspAttach", {
     })
   end,
 })
+
+-- Gurk text
+vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
+  pattern = "*/T/.tmp*",
+  callback = function()
+    vim.bo.filetype = "text"
+  end,
+  desc = "Treat gurk temporary files as text",
+})

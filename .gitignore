@@ -7,3 +7,5 @@
 /.config/nvim/spell/personal.utf-8.add.spl
 /.config/nvim/spell/personal.utf-8.add
 /.config/nvim/spell/ltex/ltex.hiddenFalsePositives.en-US.txt
+/.config/MusicBrainz
+/.config/mpd

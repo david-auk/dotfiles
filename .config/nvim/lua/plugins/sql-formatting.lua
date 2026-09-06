@@ -1,5 +1,4 @@
 return {
-  -- Ensure pgformatter is installed through Mason.
   {
     "mason-org/mason.nvim",
 
@@ -12,7 +11,6 @@ return {
     end,
   },
 
-  -- Use pg_format for SQL formatting.
   {
     "stevearc/conform.nvim",
 
@@ -20,37 +18,18 @@ return {
       opts.formatters_by_ft = opts.formatters_by_ft or {}
       opts.formatters = opts.formatters or {}
 
-      opts.formatters.pg_format_local = {
-        command = vim.fn.expand("~/Documents/git/hub/pgFormatter/pg_format"),
-
-        args = {
+      opts.formatters.pg_format = {
+        prepend_args = {
           "--vertical-align",
-
-          -- foo(...) instead of foo (...)
           "--no-space-function",
-
-          -- Alternative formatting:
-          -- notably puts function/procedure parameters on separate lines.
           "--format-type",
-
-          -- Break INSERT column/value lists rather than collapsing them.
           "--comma-break",
-
-          -- Don't allow pgFormatter to create enormous single lines.
-          -- "--wrap-limit",
-          -- "100",
-
-          -- Preserve intentional empty lines inside PL/pgSQL.
           "--keep-newline",
-
-          "-",
         },
-
-        stdin = true,
       }
 
       opts.formatters_by_ft.sql = {
-        "pg_format_local",
+        "pg_format",
       }
     end,
   },
