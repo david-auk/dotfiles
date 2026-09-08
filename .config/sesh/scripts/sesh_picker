@@ -1,18 +1,49 @@
 #!/usr/bin/env bash
 
+sesh_bin="$HOME/Documents/git/hub/sesh/sesh"
+sep=$'\x1f'
+
+row_format="{session}${sep}{fg:blue}{active_window_name_prefix}{/fg}{name}"
+
+# Quote the format so it can safely be reused inside fzf reload commands.
+printf -v quoted_format '%q' "$row_format"
+printf -v quoted_sesh_bin '%q' "$sesh_bin"
+
+all_cmd="$quoted_sesh_bin list --icons --icons-exclude tmux --format $quoted_format"
+tmux_cmd="$quoted_sesh_bin list -t --icons --icons-exclude tmux --format $quoted_format"
+config_cmd="$quoted_sesh_bin list -c --icons --icons-exclude tmux --format $quoted_format"
+zoxide_cmd="$quoted_sesh_bin list -z --icons --icons-exclude tmux --format $quoted_format"
+
+# Emit:
+#
+#   raw-path<0x1f>display-path
+#
+# so fd results use the same two-field representation as sesh results.
+find_cmd="fd -H -d 2 -t d -E .Trash . ~ | awk '{print \$0 sprintf(\"%c\", 31) \$0}'"
+
 selected=$(
-  sesh list --icons | fzf-tmux -p '80%,70%' \
-    --no-sort --ansi --border-label ' sesh ' --prompt '⚡  ' \
-    --header '  ^a all ^t tmux ^g configs ^x zoxide ^d tmux kill ^f find' \
-    --bind 'tab:down,btab:up' \
-    --bind 'ctrl-a:change-prompt(⚡  )+reload(sesh list --icons)' \
-    --bind 'ctrl-t:change-prompt(   )+reload(sesh list -t --icons)' \
-    --bind 'ctrl-g:change-prompt(   )+reload(sesh list -c --icons)' \
-    --bind 'ctrl-x:change-prompt(   )+reload(sesh list -z --icons)' \
-    --bind 'ctrl-f:change-prompt(   )+reload(fd -H -d 2 -t d -E .Trash . ~)' \
-    --bind 'ctrl-d:execute(tmux kill-session -t {2..})+change-prompt(⚡  )+reload(sesh list --icons)' \
-    --preview-window 'right:55%' \
-    --preview 'sesh preview {}'
+  "$sesh_bin" list \
+    --icons \
+    --icons-exclude tmux \
+    --format "$row_format" |
+    fzf-tmux -p '80%,70%' \
+      --no-sort \
+      --ansi \
+      --delimiter="$sep" \
+      --with-nth=2.. \
+      --accept-nth=1 \
+      --border-label ' sesh ' \
+      --prompt '⚡  ' \
+      --header '  ^a all ^t tmux ^g configs ^x zoxide ^d tmux kill ^f find' \
+      --bind 'tab:down,btab:up' \
+      --bind "ctrl-a:change-prompt(⚡  )+reload($all_cmd)" \
+      --bind "ctrl-t:change-prompt(   )+reload($tmux_cmd)" \
+      --bind "ctrl-g:change-prompt(   )+reload($config_cmd)" \
+      --bind "ctrl-x:change-prompt(   )+reload($zoxide_cmd)" \
+      --bind "ctrl-f:change-prompt(   )+reload($find_cmd)" \
+      --bind "ctrl-d:execute(tmux kill-session -t {1})+change-prompt(⚡  )+reload($all_cmd)" \
+      --preview-window 'right:55%' \
+      --preview "$quoted_sesh_bin preview {1}"
 ) || exit 0
 
-[[ -n "$selected" ]] && sesh connect "$selected"
+[[ -n "$selected" ]] && "$sesh_bin" connect "$selected"

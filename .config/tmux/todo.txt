@@ -1,3 +1,4 @@
 (B) be able to copy text within tmux popups with the copy mode
-(A) enable option backspace in VIM (also SnacksExplorer)
-(D) enable option backspace in tuxeto
+x 2026-09-08 2026-09-08 enable option backspace in VIM (also SnacksExplorer)
+x 2026-09-08 2026-09-08 enable option backspace in tuxeto
+x 2026-09-08 2026-09-06 Update tmux minimal config so sesh name is left and right can just be status icons

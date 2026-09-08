@@ -550,42 +550,9 @@
 
     browser_song_format: [
         (
-            kind: Group([
-                (
-                    kind: Property(Track),
-                    style: (
-                        fg: "#565f89",
-                    ),
-                ),
-                (
-                    kind: Text("  "),
-                ),
-            ]),
-        ),
-
-        (
-            kind: Property(Other("name")),
+            kind: Property(Title),
             default: (
-                kind: Group([
-                    (
-                        kind: Property(Artist),
-                        style: (
-                            fg: "#7aa2f7",
-                        ),
-                    ),
-                    (
-                        kind: Text("  •  "),
-                        style: (
-                            fg: "#3b4261",
-                        ),
-                    ),
-                    (
-                        kind: Property(Title),
-                    ),
-                ]),
-                default: (
-                    kind: Property(Filename),
-                ),
+                kind: Property(Filename),
             ),
         ),
     ],

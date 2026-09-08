@@ -5,6 +5,7 @@
                 "rules": [
                     {
                         "description": "Map Command+Escape to Command+Q",
+                        "enabled": false,
                         "manipulators": [
                             {
                                 "from": {

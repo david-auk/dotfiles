@@ -134,6 +134,8 @@ bindkey -M vicmd '^r' redo
 # Vi-mode macOS clipboard integration
 source "${XDG_CONFIG_HOME:-$HOME/.config}/zsh/vi-clipboard.zsh"
 
+alias sesh='~/Documents/git/hub/sesh/sesh'
+
 alias s='~/.config/sesh/scripts/sesh_picker'
 
 # pnpm

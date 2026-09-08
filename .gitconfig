@@ -11,3 +11,5 @@
 [hook "commit-spellcheck"]
 	event = commit-msg
 	command = \"/Users/david/.config/git/hooks/cspell-commit-msg\"
+[init]
+	defaultBranch = main
