@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-sesh_bin="$HOME/Documents/git/hub/sesh/sesh"
+# sesh_bin="$HOME/Documents/git/hub/sesh/sesh"
+sesh_bin=$(which sesh)
 sep=$'\x1f'
 
 row_format="{session}${sep}{fg:blue}{active_window_name_prefix}{/fg}{name}"

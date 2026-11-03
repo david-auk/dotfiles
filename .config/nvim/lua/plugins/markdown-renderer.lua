@@ -15,6 +15,7 @@ return {
 
       checkbox = {
         enabled = true,
+        left_pad = 3,
       },
     },
   },

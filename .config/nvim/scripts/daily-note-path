@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+set -u
+
+date="${1:-$(date +%Y-%m-%d)}"
+notes_root="${NOTES_ROOT:-"$HOME/notes"}"
+
+if [[ ! "$date" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]]; then
+  printf 'Invalid date: %s\n' "$date" >&2
+  exit 1
+fi
+
+year="${date:0:4}"
+month="${date:5:2}"
+
+printf '%s/daily/%s/%s/%s.md\n' \
+  "$notes_root" \
+  "$year" \
+  "$month" \
+  "$date"

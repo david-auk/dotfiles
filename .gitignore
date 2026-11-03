@@ -9,3 +9,6 @@
 /.config/nvim/spell/ltex/ltex.hiddenFalsePositives.en-US.txt
 /.config/MusicBrainz
 /.config/mpd
+/.config/opencode/service.json
+/.config/homebrew/trust.json.lock
+/.config/karabiner

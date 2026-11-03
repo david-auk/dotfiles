@@ -61,6 +61,11 @@ name = "Notes"
 path = "~/notes"
 startup_command = "nvim +'lua require(\"config.notes\").open_today()'"
 
+[[session]]
+name = "Gurk"
+path = "~"
+startup_command = "gurk && exit 0"
+
 [default_session]
 preview_command = "eza --all --git --icons --color=always {}"
 startup_command = "nvim -c ':Telescope find_files'"
